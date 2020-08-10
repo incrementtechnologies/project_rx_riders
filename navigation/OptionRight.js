@@ -36,40 +36,6 @@ class NavigationDrawerStructureRight extends Component {
         flexDirection: 'row',
         width: width - (width * .10)
       }}>
-
-      <TouchableOpacity
-        onPress={() => this.goTo('selectLocation')}
-        style={{
-          width: '85%'
-        }}>
-          <View style={{
-            width: '100%',
-            flexDirection: 'row'
-          }}>
-            <FontAwesomeIcon icon={ faMapMarker } size={15} style={[BasicStyles.iconStyle, {
-                  color: Color.primary
-                }]}/>
-            <Text style={{
-              fontSize: 12
-            }}>
-              Casili, Casili, Consolacion
-            </Text>
-          </View>
-        </TouchableOpacity>
-
-        <View style={{
-          width: '15%'
-        }}>
-          <TouchableOpacity onPress={() => this.goTo('Cart')}>
-            <View style={{ flexDirection: 'row', position: 'relative' }}>
-              <FontAwesomeIcon
-                icon={ faShoppingCart }
-                size={15}
-                style={[BasicStyles.iconStyle, { color: Color.black}]}
-              />
-            </View>
-          </TouchableOpacity>   
-        </View>
         
       </View>
     );

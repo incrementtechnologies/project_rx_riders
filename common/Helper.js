@@ -1,22 +1,29 @@
 import Color from './Color.js';
-import { faEdit, faComments, faCheck, faPaperPlane, faUser, faMapMarker, faCreditCard, faQuestionCircle, faUsers, faFile } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faComments, faCheck, faPaperPlane, faUser, faTachometerAlt, faMapMarker, faCreditCard, faQuestionCircle, faUsers, faFile } from '@fortawesome/free-solid-svg-icons';
 export default {
   company: 'Increment Technologies',
   APP_NAME: '@RunwayExpressRides_',
-  APP_NAME_BASIC: 'RunwayExpress Rides',
+  APP_NAME_BASIC: 'RunwayExpressRides',
   APP_EMAIL: 'support@runwayexpress.co.uk',
   APP_WEBSITE: 'www.runwayexpress.co.uk',
   APP_HOST: 'com.runwayexpressriders',
   DrawerMenu: [{
     title: 'Dashboard',
     route: 'Dashboard',
-    icon: faUser,
+    icon: faTachometerAlt,
     iconStyle: {
       color: Color.primary
     }
   }, {
     title: 'My Profile',
     route: 'Profile',
+    icon: faUser,
+    iconStyle: {
+      color: Color.primary
+    }
+  }, {
+    title: 'My Deliveries',
+    route: 'Deliveries',
     icon: faUser,
     iconStyle: {
       color: Color.primary
