@@ -6,7 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import Slider from 'components/Slider/WithIcons.js';
 import { Color, BasicStyles } from 'common';
-import Dashboard from 'modules/basics/Welcome.js';
+import Dashboard from 'modules/delivery';
+import Delivery from 'modules/delivery';
 import Notification from 'modules/notification';
 import Profile from 'modules/profile';
 import HelpCenter from 'modules/helpCenter';
@@ -66,9 +67,23 @@ const Dashboard_StackNavigator = createStackNavigator({
       headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
       headerRight: <OptionRight navigationProps={navigation} />,
       headerStyle: {
-        backgroundColor: Color.white,
+        backgroundColor: 'transparent',
       },
-      headerTintColor: '#fff',
+      headerTransparent: true
+    }),
+  },
+});
+
+const Delivery_StackNavigator = createStackNavigator({
+  Delivery: {
+    screen: Delivery,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
+      headerRight: <OptionRight navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: 'transparent',
+      },
+      headerTransparent: true
     }),
   },
 });
@@ -188,6 +203,12 @@ const Referral_StackNavigator = createStackNavigator({
 const Drawer = createDrawerNavigator({
   Dashboard: {
     screen: Dashboard_StackNavigator,
+    navigationOptions: {
+      drawerLabel: '',
+    },
+  },
+  Delivery: {
+    screen: Delivery_StackNavigator,
     navigationOptions: {
       drawerLabel: '',
     },

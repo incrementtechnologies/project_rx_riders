@@ -1,5 +1,5 @@
 import Color from './Color.js';
-import { faEdit, faComments, faCheck, faPaperPlane, faUser, faTachometerAlt, faMapMarker, faCreditCard, faQuestionCircle, faUsers, faFile } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faComments, faCheck, faPaperPlane, faUser, faTachometerAlt, faQuestionCircle, faUsers, faFile, faShippingFast } from '@fortawesome/free-solid-svg-icons';
 export default {
   company: 'Increment Technologies',
   APP_NAME: '@RunwayExpressRides_',
@@ -15,15 +15,15 @@ export default {
       color: Color.primary
     }
   }, {
-    title: 'My Profile',
-    route: 'Profile',
-    icon: faUser,
+    title: 'Deliveries',
+    route: 'Delivery',
+    icon: faShippingFast,
     iconStyle: {
       color: Color.primary
     }
   }, {
-    title: 'My Deliveries',
-    route: 'Deliveries',
+    title: 'My Profile',
+    route: 'Profile',
     icon: faUser,
     iconStyle: {
       color: Color.primary

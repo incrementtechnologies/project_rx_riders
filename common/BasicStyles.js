@@ -109,6 +109,9 @@ export default {
     paddingLeft: 20,
     paddingRight: 20
   },
+  normalFontSize: {
+    fontSize: 12
+  },
   Separator: {
     height: 0.5,
     width: width - 40,
