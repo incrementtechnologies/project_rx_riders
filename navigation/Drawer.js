@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import Slider from 'components/Slider/WithIcons.js';
 import { Color, BasicStyles } from 'common';
-import Dashboard from 'modules/dashboard';
+import Dashboard from 'modules/basics/Welcome.js';
 import Notification from 'modules/notification';
 import Profile from 'modules/profile';
 import HelpCenter from 'modules/helpCenter';
