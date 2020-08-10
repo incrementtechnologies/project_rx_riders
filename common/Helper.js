@@ -2,21 +2,14 @@ import Color from './Color.js';
 import { faEdit, faComments, faCheck, faPaperPlane, faUser, faMapMarker, faCreditCard, faQuestionCircle, faUsers, faFile } from '@fortawesome/free-solid-svg-icons';
 export default {
   company: 'Increment Technologies',
-  APP_NAME: '@RunwayExpress_',
-  APP_NAME_BASIC: 'RunwayExpress',
-  APP_EMAIL: 'support@runwayexpress.com',
-  APP_WEBSITE: 'www.runwayexpress.com',
-  APP_HOST: 'com.runwayexpress',
+  APP_NAME: '@RunwayExpressRides_',
+  APP_NAME_BASIC: 'RunwayExpress Rides',
+  APP_EMAIL: 'support@runwayexpress.co.uk',
+  APP_WEBSITE: 'www.runwayexpress.co.uk',
+  APP_HOST: 'com.runwayexpressriders',
   DrawerMenu: [{
-    title: 'Homepage',
-    route: 'Homepage',
-    icon: faUser,
-    iconStyle: {
-      color: Color.primary
-    }
-  }, {
-    title: 'My Order History',
-    route: 'MyOrders',
+    title: 'Dashboard',
+    route: 'Dashboard',
     icon: faUser,
     iconStyle: {
       color: Color.primary
@@ -25,34 +18,6 @@ export default {
     title: 'My Profile',
     route: 'Profile',
     icon: faUser,
-    iconStyle: {
-      color: Color.primary
-    }
-  }, {
-    title: 'My Address',
-    route: 'MyAddress',
-    icon: faMapMarker,
-    iconStyle: {
-      color: Color.primary
-    }
-  }, {
-    title: 'Payment Methods',
-    route: 'PaymentMethods',
-    icon: faCreditCard,
-    iconStyle: {
-      color: Color.primary
-    }
-  }, {
-    title: 'Help Center',
-    route: 'HelpCenter',
-    icon: faQuestionCircle,
-    iconStyle: {
-      color: Color.primary
-    }
-  }, {
-    title: 'Invite Friends',
-    route: 'InviteFriends',
-    icon: faUsers,
     iconStyle: {
       color: Color.primary
     }
@@ -90,13 +55,15 @@ export default {
   DrawerMenuBottom: [{
     title: 'Settings',
     route: 'Settings'
-  }, {
-    title: 'Terms and Conditions',
-    route: 'TermsAndConditions'
-  }, {
-    title: 'Privacy Policy',
-    route: 'PrivacyPolicy'
-  }],
+  }
+  // {
+  //   title: 'Terms and Conditions',
+  //   route: 'TermsAndConditions'
+  // }, {
+  //   title: 'Privacy Policy',
+  //   route: 'PrivacyPolicy'
+  // }
+  ],
   pagerMenu: [{
     title: 'FEATURED',
     value: 'featured'

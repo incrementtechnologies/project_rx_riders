@@ -30,7 +30,7 @@ class NavigationDrawerStructureRight extends Component {
   
   render() {
     const { notifications, user, activeRoute } = this.props.state;
-    const { theme, cart } = this.props.state
+    const { theme } = this.props.state
     return (
       <View style={{
         flexDirection: 'row',
@@ -67,26 +67,6 @@ class NavigationDrawerStructureRight extends Component {
                 size={15}
                 style={[BasicStyles.iconStyle, { color: Color.black}]}
               />
-              {
-                cart.length > 0 &&
-                <View
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    position: 'absolute',
-                    backgroundColor: theme ? theme.primary : Color.primary,
-                    top: 5,
-                    left: 20,
-                    width: 12,
-                    height: 12,
-                    borderRadius: 6
-                  }}
-                >
-                  <Text style={{ color: Color.white, fontSize: 9 }}>
-                    {cart.length}
-                  </Text>
-                </View>
-              }
             </View>
           </TouchableOpacity>   
         </View>

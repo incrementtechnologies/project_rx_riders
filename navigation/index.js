@@ -57,7 +57,7 @@ const PrimaryNav = createStackNavigator({
   // Default config for all screens
   headerMode: 'none',
   title: 'Main',
-  initialRouteName: 'drawerStack'
+  initialRouteName: 'loginStack'
 })
 
 export default PrimaryNav;

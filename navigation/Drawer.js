@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import Slider from 'components/Slider/WithIcons.js';
 import { Color, BasicStyles } from 'common';
-import Homepage from 'modules/homepage';
 import Dashboard from 'modules/dashboard';
 import Notification from 'modules/notification';
 import Profile from 'modules/profile';
@@ -18,7 +17,6 @@ import Merchant from 'modules/merchant';
 import MyAddress from 'modules/myAddresses';
 import Settings from 'modules/settings';
 import Referral from 'modules/referral';
-import MyOrders from 'modules/orders';
 import { connect } from 'react-redux';
 
 class MenuDrawerContentStructure extends Component {
@@ -59,27 +57,6 @@ const mapDispatchToProps = dispatch => {
 };
 
 let MenuDrawerStructure = connect(mapStateToProps, mapDispatchToProps)(MenuDrawerContentStructure);
- 
-const Homepage_StackNavigator = createStackNavigator({
-  Homepage: {
-    screen: Homepage,
-    navigationOptions: ({ navigation }) => ({
-      headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
-      headerRight: <OptionRight navigationProps={navigation} />,
-      headerStyle: {
-        backgroundColor: Color.white,
-      },
-      headerTintColor: '#fff',
-    }),
-  },
-  Merchant: {
-    screen: Merchant,
-    navigationOptions: {
-      headerTransparent: true,
-      headerTintColor: '#fff'
-    }
-  }
-});
 
  
 const Dashboard_StackNavigator = createStackNavigator({
@@ -151,20 +128,6 @@ const Notification_StackNavigator = createStackNavigator({
   },
 });
 
-const MyOrders_StackNavigator = createStackNavigator({
-  MyOrders: {
-    screen: MyOrders,
-    navigationOptions: ({ navigation }) => ({
-      headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
-      headerRight: <OptionRight navigationProps={navigation} />,
-      headerStyle: {
-        backgroundColor: Color.white,
-      },
-      headerTintColor: '#fff',
-    }),
-  },
-});
-
 const Profile_StackNavigator = createStackNavigator({
   Profile: {
     screen: Profile,
@@ -223,12 +186,6 @@ const Referral_StackNavigator = createStackNavigator({
 
 
 const Drawer = createDrawerNavigator({
-  Homepage: {
-    screen: Homepage_StackNavigator,
-    navigationOptions: {
-      drawerLabel: '',
-    },
-  },
   Dashboard: {
     screen: Dashboard_StackNavigator,
     navigationOptions: {
@@ -237,12 +194,6 @@ const Drawer = createDrawerNavigator({
   },
   HelpCenter: {
     screen: HelpCenter_StackNavigator,
-    navigationOptions: {
-      drawerLabel: '',
-    },
-  },
-  MyOrders: {
-    screen: MyOrders_StackNavigator,
     navigationOptions: {
       drawerLabel: '',
     },
