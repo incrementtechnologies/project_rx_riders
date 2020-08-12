@@ -29,36 +29,7 @@ export default {
       color: Color.primary
     }
   }],
-  DrawerMenuLogout: [{
-    title: 'Homepage',
-    route: 'Homepage',
-    icon: faUser,
-    iconStyle: {
-      color: Color.primary
-    }
-  },
-  {
-    title: 'My Orders',
-    route: 'MyOrders',
-    icon: faFile,
-    iconStyle: {
-      color: Color.primary
-    }
-  }, {
-    title: 'Help Center',
-    route: 'HelpCenter',
-    icon: faQuestionCircle,
-    iconStyle: {
-      color: Color.primary
-    }
-  }, {
-    title: 'Invite Friends',
-    route: 'InviteFriends',
-    icon: faUsers,
-    iconStyle: {
-      color: Color.primary
-    }
-  }],
+  DrawerMenuLogout: [],
   DrawerMenuBottom: [{
     title: 'Settings',
     route: 'Settings'

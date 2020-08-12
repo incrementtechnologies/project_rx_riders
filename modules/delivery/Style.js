@@ -11,7 +11,8 @@ export default {
     paddingBottom: 50
   },
   TextContainer: {
-    flex: 1
+    flex: 1,
+    width: '100%'
   },
   map:{
     position:'relative',

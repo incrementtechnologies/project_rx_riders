@@ -9,6 +9,7 @@ const types = {
   SET_NOTIFICATIONS: 'SET_NOTIFICATIONS',
   UPDATE_NOTIFICATIONS: 'UPDATE_NOTIFICATIONS',
   SET_THEME: 'SET_THEME',
+  SET_ORDER: 'SET_ORDER',
   nav: null,
 }
 
@@ -30,6 +31,9 @@ export const actions = {
   },
   setTheme(theme){
     return { type: types.SET_THEME, theme };
+  },
+  setOrder(order){
+    return { type: types.SET_ORDER, order };
   }
 };
 
@@ -37,7 +41,8 @@ const initialState = {
   token: null,
   user: null,
   notifications: null,
-  theme: null
+  theme: null,
+  order: null
 }
 
 storeData = async (key, value) => {
@@ -52,7 +57,7 @@ const reducer = (state = initialState, action) => {
   const { type, user, token } = action;
   const { unread } = action;
   const { notification } = action;
-  const { theme } = action;
+  const { theme, order } = action;
 
   switch (type) {
     case types.LOGOUT:
@@ -122,6 +127,11 @@ const reducer = (state = initialState, action) => {
       return{
         ...state,
         theme
+      }
+    case types.SET_ORDER:
+      return{
+        ...state,
+        order
       }
     default:
       return {...state, nav: state.nav};

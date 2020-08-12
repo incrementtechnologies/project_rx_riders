@@ -21,8 +21,8 @@ class Delivery extends Component {
     this.state = {
       viewerHeight: 70,
       region: {
-        latitude: null,
-        longitude: null,
+        latitude: 10.342326,
+        longitude: 123.8957059,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       }
@@ -30,13 +30,13 @@ class Delivery extends Component {
   }
 
   componentDidMount(){
-    Geolocation.getCurrentPosition(info => {
-      this.setState({region:{
-        ...this.state.region,
-        latitude:info.coords.latitude,
-        longitude:info.coords.longitude
-      }});
-     })
+    // Geolocation.getCurrentPosition(info => {
+    //   this.setState({region:{
+    //     ...this.state.region,
+    //     latitude:info.coords.latitude,
+    //     longitude:info.coords.longitude
+    //   }});
+    //  })
   }
 
   viewMore = () => {
@@ -266,7 +266,7 @@ class Delivery extends Component {
     );
   }
   render() {
-    const { user } = this.props.state; 
+    const { user, order } = this.props.state;
     return (
       <View style={Style.MainContainer}>
         <View style={{
@@ -280,6 +280,44 @@ class Delivery extends Component {
             onRegionChangeComplete={(e)=>this.onRegionChange(e)}
             //onPress={()=>this.animate()}
             >
+            {
+              (order != null && order.merchant != null) && (
+                <Marker
+                  coordinate={{
+                    longitude: parseFloat(order.merchant.location.longitude),
+                    latitude: parseFloat(order.merchant.location.latitude),
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                  }}
+                  draggable
+                  onDragEnd={(e) => {
+                    // this.manageOnDragEnd(e)
+                  }}
+                  title={order.merchant.location.route}
+                />                
+              )
+            }
+
+
+            {
+              (order != null && order.location != null) && (
+                <Marker
+                  coordinate={{
+                    longitude: parseFloat(order.location.longitude),
+                    latitude: parseFloat(order.location.latitude),
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                  }}
+                  draggable
+                  onDragEnd={(e) => {
+                    // this.manageOnDragEnd(e)
+                  }}
+                  title={order.location.route}
+                />                
+              )
+            }
+            
+
           </MapView>
           <View style={{
             position: 'absolute',

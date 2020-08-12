@@ -24,19 +24,10 @@ export default {
   // images
   imageUpload: apiUrl + 'images/upload',
   imageRetrieve: apiUrl + 'images/retrieve',
-  // carts
-  cartsCreate: apiUrl + 'carts/create',
-  cartsRetrieve: apiUrl + 'carts/retrieve',
-  cartsDelete: apiUrl + 'carts/delete',
-  cartsUpdate: apiUrl + 'carts/update',
-  // products
-  productsRetrieve: apiUrl + 'products/retrieve_basic',
-  // dashboard
-  dashboardRetrieveCategoryList: apiUrl + 'dashboard/categories',
-  dashboardRetrieveFeaturedProducts: apiUrl + 'dashboard/featured',
-  dashboardRetrieveCategoryProducts: apiUrl + 'dashboard/category',
-  dashboardRetrieveShops: apiUrl + 'dashboard/shops',
   // checkout
   checkoutCreate: apiUrl + 'checkouts/create',
-  checkoutRetrieve: apiUrl + 'checkouts/retrieve'
+  checkoutRetrieve: apiUrl + 'checkouts/retrieve',
+  //Deliveries
+  deliveryCreate: apiUrl + 'deliveries/create',
+  deliveryRetrieve: apiUrl + 'deliveries/retrieve'
 }

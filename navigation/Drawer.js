@@ -7,7 +7,7 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 import Slider from 'components/Slider/WithIcons.js';
 import { Color, BasicStyles } from 'common';
 import Dashboard from 'modules/delivery';
-import Delivery from 'modules/delivery';
+import Delivery from 'modules/delivery/MyDelivery.js';
 import Notification from 'modules/notification';
 import Profile from 'modules/profile';
 import HelpCenter from 'modules/helpCenter';
@@ -78,12 +78,13 @@ const Delivery_StackNavigator = createStackNavigator({
   Delivery: {
     screen: Delivery,
     navigationOptions: ({ navigation }) => ({
+      title: 'My Deliveries',
       headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
       headerRight: <OptionRight navigationProps={navigation} />,
       headerStyle: {
-        backgroundColor: 'transparent',
+        backgroundColor: Color.white,
       },
-      headerTransparent: true
+      headerTintColor: Color.primary,
     }),
   },
 });
@@ -210,7 +211,7 @@ const Drawer = createDrawerNavigator({
   Delivery: {
     screen: Delivery_StackNavigator,
     navigationOptions: {
-      drawerLabel: '',
+      drawerLabel: 'My Deliveries',
     },
   },
   HelpCenter: {
