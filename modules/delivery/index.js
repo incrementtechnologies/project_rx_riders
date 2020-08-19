@@ -11,6 +11,8 @@ import Geolocation from '@react-native-community/geolocation';
 import { Routes, Color, Helper, BasicStyles } from 'common';
 import Currency from 'services/Currency.js';
 import * as Progress from 'react-native-progress';
+import MapViewDirections from 'react-native-maps-directions';
+import CONFIG from 'src/config.js';
 
 const width = Math.round(Dimensions.get('window').width);
 const height = Math.round(Dimensions.get('window').height);
@@ -316,6 +318,22 @@ class Delivery extends Component {
                 />                
               )
             }
+
+            {/*
+              (order != null && order.merchant != null && order.location != null) && (
+                <MapViewDirections
+                  origin={order.merchant.location}
+                  destination={order.location}
+                  apikey={CONFIG.GOOGLE.API_KEY}
+                  strokeWidth={3}
+                  strokeColor={Color.primary}
+                  timePrecision={'now'}
+                  mode={''}
+                />
+              )*/
+            }
+
+            
             
 
           </MapView>
