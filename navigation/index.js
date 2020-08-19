@@ -1,6 +1,6 @@
 
 import { createStackNavigator } from 'react-navigation-stack';
-import Login from 'modules/basics/SliderLogin';
+import Login from 'modules/login';
 import ForgotPassword from 'modules/basics/ForgotPassword';
 import Register from 'modules/basics/Register';
 import Drawer from './Drawer';

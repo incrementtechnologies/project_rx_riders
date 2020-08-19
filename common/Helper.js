@@ -57,8 +57,9 @@ export default {
   }],
   pusher: {
     broadcast_type: 'pusher',
-    channel: 'runwayexpress',
+    channel: 'runway',
     notifications: 'App\\Events\\Notifications',
+    rider: 'App\\Events\\Rider',
     typing: 'typing'
   },
   tutorials: [
