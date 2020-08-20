@@ -49,11 +49,14 @@ class MyDelivery extends Component {
       this.setState({
         isLoading: false
       })
-      if(response.data.length > 0){
+
+      // if(response.data.length > 0){
+      // temporary --- (false)
+      if (false) {
         this.setState({
           data: response.data
         })
-      }else{
+      } else {
         this.setState({
           data: [{
             account: {

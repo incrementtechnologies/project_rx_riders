@@ -11,7 +11,7 @@ import Geolocation from '@react-native-community/geolocation';
 import { Routes, Color, Helper, BasicStyles } from 'common';
 import Currency from 'services/Currency.js';
 import * as Progress from 'react-native-progress';
-import MapViewDirections from 'react-native-maps-directions';
+// import MapViewDirections from 'react-native-maps-directions';
 import CONFIG from 'src/config.js';
 
 const width = Math.round(Dimensions.get('window').width);

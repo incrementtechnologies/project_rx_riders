@@ -54,7 +54,8 @@ const PrimaryNav = createStackNavigator({
   Cart:{screen:CartStack},
   addressMap:{screen:addressMapStack},
   paymentOptions:{screen:paymentOptionStack},
-  mapStack: { screen: MapStack}
+  mapStack: { screen: MapStack},
+  
 }, {
   // Default config for all screens
   headerMode: 'none',
