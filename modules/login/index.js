@@ -118,8 +118,17 @@ class Login extends Component {
     });
 
     Notifications.events().registerNotificationOpened((notification, completion) => {
-      if(notification.extra != ''){
-        this.redirectToDrawer(notification.extra)
+      const { user } =  this.props.state
+      if (user !== null) {
+        if (notification.payload.extra === 'Delivery') {
+          const navigateAction = NavigationActions.navigate({
+            routeName: 'NewDelivery',
+            params: notification.payload.data
+          });
+          this.props.navigation.dispatch(navigateAction); 
+        } else if (notification.payload.extra != ''){
+          this.redirectToDrawer(notification.payload.extra)
+        }
       }
       completion();
     });
@@ -129,11 +138,12 @@ class Login extends Component {
     Notifications.registerRemoteNotifications();
   }
 
-  sendLocalNotification(title, body, route) {
+  sendLocalNotification(title, body, route, data = null) {
     Notifications.postLocalNotification({
         title: title,
         body: body,
-        extra: route
+        extra: route,
+        data
     });
   }
 
@@ -173,6 +183,7 @@ class Login extends Component {
       }
     } else if(response.type == Helper.pusher.rider){
       console.log({ response })
+      this.sendLocalNotification('New delivery!', 'Click to accept/decline', 'Delivery', response)
       this.playAudio()
     }
   }
