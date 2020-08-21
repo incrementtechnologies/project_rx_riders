@@ -5,6 +5,9 @@ export default {
   pusher: null,
   channel: null,
   listen (callback) {
+    // return if pusher is already initialized
+    if (this.pusher) return
+
     this.pusher = new Pusher(Config.PUSHER.key, Config.PUSHER);
     this.channel = this.pusher.subscribe(Helper.pusher.channel);
     this.channel.bind(Helper.pusher.notifications, response => {
@@ -22,6 +25,9 @@ export default {
     this.channel.bind(Helper.pusher.systemNotification, response => {
       console.log('hello')
       callback({type: Helper.pusher.systemNotification, data: response.data})
+    })
+    this.channel.bind(Helper.pusher.rider, response => {
+      callback({type: Helper.pusher.rider, data: response.data})
     })
   }
 }

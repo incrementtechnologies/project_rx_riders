@@ -18,6 +18,7 @@ import Merchant from 'modules/merchant';
 import MyAddress from 'modules/myAddresses';
 import Settings from 'modules/settings';
 import Referral from 'modules/referral';
+import NewDelivery from 'modules/newDelivery';
 import { connect } from 'react-redux';
 import Ledger from 'modules/Ledger';
 
@@ -88,6 +89,18 @@ const Delivery_StackNavigator = createStackNavigator({
       headerTintColor: Color.primary,
     }),
   },
+  NewDelivery: {
+    screen: NewDelivery,
+    navigationOptions: ({ navigation }) => ({
+      title: 'New Delivery',
+      headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
+      headerRight: <OptionRight navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: Color.white,
+      },
+      headerTintColor: Color.primary,
+    }),
+  }
 });
 
 const Ledger_StackNavigator = createStackNavigator({

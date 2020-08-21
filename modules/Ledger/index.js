@@ -196,27 +196,7 @@ class Ledgers extends Component {
             </TouchableOpacity>
           </View>
         
-      
-
-      {
-       
-          // <View style={{
-          //   width: '50%',
-          //   alignItems: 'center',
-          //   borderLeftColor: Color.gray,
-          //   borderLeftWidth: 1
-          // }}>
-          //   <TouchableOpacity 
-          //     onPress={() => alert("henlo")}
-          //     underlayColor={Color.gray}
-          //     >
-          //     <Text style={[styles.text, {
-          //       color: Color.primary
-          //     }]}>Continue</Text>
-          //   </TouchableOpacity>
-          // </View>
-        
-      }
+    
       
     </View>
 

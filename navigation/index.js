@@ -1,6 +1,6 @@
 
 import { createStackNavigator } from 'react-navigation-stack';
-import Login from 'modules/basics/SliderLogin';
+import Login from 'modules/login';
 import ForgotPassword from 'modules/basics/ForgotPassword';
 import Register from 'modules/basics/Register';
 import Drawer from './Drawer';
@@ -54,7 +54,8 @@ const PrimaryNav = createStackNavigator({
   Cart:{screen:CartStack},
   addressMap:{screen:addressMapStack},
   paymentOptions:{screen:paymentOptionStack},
-  mapStack: { screen: MapStack}
+  mapStack: { screen: MapStack},
+  
 }, {
   // Default config for all screens
   headerMode: 'none',

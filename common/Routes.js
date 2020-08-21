@@ -26,11 +26,16 @@ export default {
   imageRetrieve: apiUrl + 'images/retrieve',
   // checkout
   checkoutCreate: apiUrl + 'checkouts/create',
-  checkoutRetrieve: apiUrl + 'checkouts/retrieve',
-  //Deliveries
+  checkoutRetrieve: apiUrl + 'checkouts/retrieve_orders',
+  // Deliveries
   deliveryCreate: apiUrl + 'deliveries/create',
   deliveryRetrieve: apiUrl + 'deliveries/retrieve',
   //Notifs
   notificationSettingsRetrieve: apiUrl + 'notification_settings/retrieve',
-  withdrawalCreate: apiUrl + 'withdrawals/create'
+  withdrawalCreate: apiUrl + 'withdrawals/create',
+  myDeliveryRetrieve: apiUrl + 'deliveries/my_deliveries',
+  // Merchants
+  merchantsRetrieve: apiUrl + 'merchants/retrieve',
+  //Checkout
+  checkoutRetrieveByRider: apiUrl + 'checkouts/retrieve_by_rider',
 }
