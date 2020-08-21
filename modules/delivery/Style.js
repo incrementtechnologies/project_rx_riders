@@ -4,7 +4,6 @@ const width = Math.round(Dimensions.get('window').width);
 const height = Math.round(Dimensions.get('window').height);
 export default {
   ScrollView: {
-    padding: 20
   },
   MainContainer: {
     width: '100%',

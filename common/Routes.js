@@ -30,6 +30,7 @@ export default {
   // Deliveries
   deliveryCreate: apiUrl + 'deliveries/create',
   deliveryRetrieve: apiUrl + 'deliveries/retrieve',
+  myDeliveryRetrieve: apiUrl + 'deliveries/my_deliveries',
   // Merchants
   merchantsRetrieve: apiUrl + 'merchants/retrieve'
 }

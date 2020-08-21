@@ -43,16 +43,21 @@ class MyDelivery extends Component {
         column: 'rider',
         clause: '=',
         value: user.id
-      }]
+      }],
+      sort: {
+        created_at: 'desc'
+      }
     }
-    Api.request(Routes.deliveryRetrieve, parameter, response => {
+    console.log('parameter', parameter)
+    Api.request(Routes.myDeliveryRetrieve, parameter, response => {
+      console.log(response)
       this.setState({
         isLoading: false
       })
 
       // if(response.data.length > 0){
       // temporary --- (false)
-      if (false) {
+      if (response.data.length > 0) {
         this.setState({
           data: response.data
         })
@@ -75,12 +80,10 @@ class MyDelivery extends Component {
               shipping_fee: 50,
               currency: 'PHP'
             },
-            merchant: {
-              location: {
-                route: 'McDo',
-                latitude: 10.342326,
-                longitude: 123.8957059
-              }
+            merchant_location: {
+              route: 'McDo',
+              latitude: 10.342326,
+              longitude: 123.8957059
             },
             status: 'pending'
           }]
@@ -107,16 +110,14 @@ class MyDelivery extends Component {
         style={Style.ScrollView}
         onScroll={(event) => {
           if(event.nativeEvent.contentOffset.y <= 0) {
-            if(this.state.isLoading == false){
-              this.retrieve()
-            }
+            this.retrieve()
           }
         }}
         >
-        {data == null && (<Empty refresh={true} onRefresh={() => this.retrieve()}/>)}
         {isLoading ? <Spinner mode="overlay"/> : null }
+        {data == null && (<Empty refresh={true} onRefresh={() => this.retrieve()}/>)}
         <View style={[Style.MainContainer, {
-          minHeight: height + 50
+          minHeight: height
         }]}>
           {
             data && (
@@ -125,22 +126,26 @@ class MyDelivery extends Component {
                   extraData={selected}
                   ItemSeparatorComponent={this.FlatListItemSeparator}
                   renderItem={({ item, index }) => (
-                    <View style={{
-                      paddingTop: 10,
-                      paddingBottom: 10,
-                      borderBottomColor: Color.lightGray,
-                      borderBottomWidth: 1
-                    }}>
                       <TouchableHighlight
                         onPress={() => {this.viewOrder(item)}}
                         underlayColor={Color.primary}
                         style={{
-                          width: '100%'
+                          width: '100%',
+                          paddingTop: 10,
+                          paddingBottom: 10,
+                          paddingLeft: 20,
+                          paddingRight: 20,
+                          borderBottomColor: Color.lightGray,
+                          borderBottomWidth: 1
                         }}
                         >
                         <View style={[Style.TextContainer, {
-                          backgroundColor: Color.white
                         }]}>
+                          <View>
+                            <Text style={[BasicStyles.normalFontSize, {
+                              color: Color.gray
+                            }]}>{item.date}</Text>
+                          </View>
                           <View style={{
                             flexDirection: 'row',
                             width: '100%'
@@ -160,10 +165,11 @@ class MyDelivery extends Component {
                               textAlign: 'right'
                             }]}>
                             {
-                              Currency.display(item.checkout.total, item.checkout.currency)
+                              Currency.display(item.checkout.shipping_fee, item.checkout.currency)
                             }
                             </Text>
                           </View>
+                          {/*
                           <View style={{
                             flexDirection: 'row'
                           }}>
@@ -171,11 +177,6 @@ class MyDelivery extends Component {
                             <View style={{
                               width: '50%'
                             }}>
-                              {
-                                /*
-                                   From address
-                                */
-                              }
                               <View>
                                 <Text style={[BasicStyles.normalFontSize, {
                                   color: Color.gray
@@ -188,7 +189,7 @@ class MyDelivery extends Component {
                                 <Text style={[BasicStyles.normalFontSize, {
                                   
                                 }]}>{
-                                  item.merchant.location.route
+                                  item.merchant_location.route
                                 }</Text>
                               </View>
                             </View>
@@ -197,11 +198,6 @@ class MyDelivery extends Component {
                             <View style={{
                               width: '50%'
                             }}>
-                              {
-                                /*
-                                   To address
-                                */
-                              }
                               <View>
                                 <Text style={[BasicStyles.normalFontSize, {
                                   color: Color.gray
@@ -211,15 +207,19 @@ class MyDelivery extends Component {
                                 flexDirection: 'row'
                               }}>
                                 <FontAwesomeIcon icon={faMapMarker} color={Color.primary}/>
-                                <Text style={[BasicStyles.normalFontSize, {
-                                  
-                                }]}>{
-                                  item.location.route
-                                }</Text>
+                                {
+                                  item.location != null && (
+                                    <Text style={[BasicStyles.normalFontSize, {
+                                    }]}>{
+                                      item.location.route
+                                    }</Text>
+                                  )
+                                }
                               </View>
                             </View>
 
                           </View>
+                          */}
 
                           <View style={{
                             backgroundColor: Color.primary,
@@ -241,7 +241,6 @@ class MyDelivery extends Component {
 
                         </View>
                       </TouchableHighlight>
-                    </View>
                   )}
                   keyExtractor={(item, index) => index.toString()}
                 />

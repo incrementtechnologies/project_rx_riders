@@ -283,11 +283,11 @@ class Delivery extends Component {
             //onPress={()=>this.animate()}
             >
             {
-              (order != null && order.merchant != null) && (
+              (order != null && order.merchant_location != null) && (
                 <Marker
                   coordinate={{
-                    longitude: parseFloat(order.merchant.location.longitude),
-                    latitude: parseFloat(order.merchant.location.latitude),
+                    longitude: parseFloat(order.merchant_location.longitude),
+                    latitude: parseFloat(order.merchant_location.latitude),
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421,
                   }}
@@ -295,7 +295,7 @@ class Delivery extends Component {
                   onDragEnd={(e) => {
                     // this.manageOnDragEnd(e)
                   }}
-                  title={order.merchant.location.route}
+                  title={order.merchant_location.route}
                 />                
               )
             }
