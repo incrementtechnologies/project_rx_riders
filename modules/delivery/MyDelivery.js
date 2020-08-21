@@ -95,7 +95,6 @@ class MyDelivery extends Component {
   }
 
   viewOrder(params){
-    console.log(params)
     const { setOrder } = this.props;
     setOrder(params)
     this.props.navigation.navigate('mapStack');

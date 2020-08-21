@@ -13,6 +13,7 @@ import Currency from 'services/Currency.js';
 import * as Progress from 'react-native-progress';
 // import MapViewDirections from 'react-native-maps-directions';
 import CONFIG from 'src/config.js';
+import Api from 'services/api/index.js';
 
 const width = Math.round(Dimensions.get('window').width);
 const height = Math.round(Dimensions.get('window').height);
@@ -27,7 +28,8 @@ class Delivery extends Component {
         longitude: 123.8957059,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
-      }
+      },
+      data: null
     } 
   }
 
@@ -39,6 +41,32 @@ class Delivery extends Component {
     //     longitude:info.coords.longitude
     //   }});
     //  })
+    this.retrieve()
+  }
+
+  retrieve(){
+    const { order } = this.props.state;
+    if(order == null){
+      this.props.navigation.navigate('drawerStack');
+      return
+    }
+    let parameter = {
+      condition: [{
+        value: order.checkout_id,
+        column: 'id',
+        clause: '='
+      }]
+    }
+    Api.request(Routes.checkoutRetrieveByRider, parameter, response => {
+      console.log(response.data[0])
+      if(response.data.length > 0){
+        this.setState({
+          data: response.data[0]
+        })
+      }else{
+        this.props.navigation.navigate('drawerStack');
+      }
+    })
   }
 
   viewMore = () => {
@@ -53,6 +81,7 @@ class Delivery extends Component {
   }
 
   _viewMore = () => {
+    const { data } = this.state;
     return (
         <View style={{
           width: '100%',
@@ -60,31 +89,48 @@ class Delivery extends Component {
           paddingRight: 10,
           marginTop: 10
         }}>
+          {
+            data.merchant_location != null && (
+              <View style={[Style.borderTop, {
+                flexDirection: 'row',
+              }]}>
+                <Text style={[
+                    BasicStyles.normalFontSize, {
+                      color: Color.primary
+                    }
+                  ]}>
+                  From {data.merchant_location.route + ', ' + data.merchant_location.locality}
+                </Text>
+              </View>
+            )
+          }
+
+          {
+            data.location != null && (
+              <View style={[Style.borderTop, {
+                flexDirection: 'row',
+              }]}>
+                <Text style={[
+                    BasicStyles.normalFontSize, {
+                      color: Color.primary
+                    }
+                  ]}>
+                  To {data.location.route + ', ' + data.location.locality}
+                </Text>
+              </View>
+              
+            )
+          }
+
           <View style={[Style.borderTop, {
             flexDirection: 'row',
             justifyContent: 'center'
           }]}>
-            <FontAwesomeIcon icon={faMapMarker} color={Color.primary}/>
             <Text style={[
                 BasicStyles.normalFontSize, {
-                  color: Color.primary
                 }
               ]}>
-              Casili, Consolacion, Cebu
-            </Text>
-          </View>
-          <View style={[Style.borderTop, {
-            flexDirection: 'row'
-          }]}>
-            <Text style={BasicStyles.normalFontSize}>
-              Order Number : 
-            </Text>
-            <Text style={[
-                BasicStyles.normalFontSize, {
-                  color: Color.gray
-                }
-              ]}>
-              123456
+              Order #: {data.order_number}
             </Text>
           </View>
 
@@ -92,8 +138,7 @@ class Delivery extends Component {
             /*
               Loop items here
 
-            */
-          }
+           
            <View style={[Style.borderTop, {
             flexDirection: 'row',
             paddingLeft: 10
@@ -116,6 +161,9 @@ class Delivery extends Component {
             </Text>
           </View>
 
+           */
+          }
+
           <View style={[Style.borderTop, {
             flexDirection: 'row'
           }]}>
@@ -131,7 +179,7 @@ class Delivery extends Component {
                 }
               ]}>
               {
-                Currency.display(100, 'PHP')
+                Currency.display(data.sub_total, data.currency ? data.currency : 'PHP')
               }
             </Text>
           </View>
@@ -151,7 +199,7 @@ class Delivery extends Component {
                 }
               ]}>
               {
-                Currency.display(50, 'PHP')
+                Currency.display(data.shipping_fee, data.currency ? data.currency : 'PHP')
               }
             </Text>
           </View>
@@ -175,7 +223,7 @@ class Delivery extends Component {
                 }
               ]}>
               {
-                Currency.display(200, 'PHP')
+                Currency.display(data.total, data.currency ? data.currency : 'PHP')
               }
             </Text>
           </View>
@@ -202,7 +250,7 @@ class Delivery extends Component {
   }
   
   _order = () => {
-    const { user } = this.props.state;
+    const { data } = this.state;
     return (
       <View>
         <TouchableOpacity style={{
@@ -221,40 +269,48 @@ class Delivery extends Component {
           }}>
             <Text style={{
               textAlign: 'left',
-              color: Color.primary,
               width: '50%'
             }}>{
-              '3.5 km: 30 mins'
+              data.distance
             }</Text>
             <Text style={{
               textAlign: 'right',
               color: Color.primary,
-              width: '35%',
+              width: '50%',
               fontWeight: 'bold'
             }}>{
-              user.username.toUpperCase()
+              data.name
             }</Text>
-            <View style={{
-              width: '15%',
-              alignItems: 'flex-end',
-              justifyContent: 'center'
-            }}>
-              <TouchableOpacity style={{
-                  backgroundColor: Color.success,
-                  height: 40,
-                  borderRadius: 25,
-                  width: 40,
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-                onPress={() => {}}
-                underlayColor={Color.primary}
-                >
-                  <FontAwesomeIcon icon={faPhoneAlt} color={Color.white}/>
-              </TouchableOpacity>
-            </View>
+            {
+              /*
+
+              <View style={{
+                width: '15%',
+                alignItems: 'flex-end',
+                justifyContent: 'center'
+              }}>
+                <TouchableOpacity style={{
+                    backgroundColor: Color.success,
+                    height: 40,
+                    borderRadius: 25,
+                    width: 40,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  onPress={() => {}}
+                  underlayColor={Color.primary}
+                  >
+                    <FontAwesomeIcon icon={faPhoneAlt} color={Color.white}/>
+                </TouchableOpacity>
+              </View>
+
+              */
+            }
+            
           </View>
         </TouchableOpacity>
+
+        {/*
         <View style={{
           width: '100%',
           marginBottom: 2,
@@ -262,13 +318,14 @@ class Delivery extends Component {
           justifyContent: 'center',
           alignItems: 'center'
         }}>
-          <Progress.Bar progress={0.3} width={width * .90}  color={Color.secondary}/>
+          <Progress.Bar progress={0.3} width={width * .98}  color={Color.secondary}/>
         </View>
+        */}
       </View>
     );
   }
   render() {
-    const { user, order } = this.props.state;
+    const { data } = this.state;
     return (
       <View style={Style.MainContainer}>
         <View style={{
@@ -283,11 +340,11 @@ class Delivery extends Component {
             //onPress={()=>this.animate()}
             >
             {
-              (order != null && order.merchant_location != null) && (
+              (data != null && data.merchant_location != null) && (
                 <Marker
                   coordinate={{
-                    longitude: parseFloat(order.merchant_location.longitude),
-                    latitude: parseFloat(order.merchant_location.latitude),
+                    longitude: parseFloat(data.merchant_location.longitude),
+                    latitude: parseFloat(data.merchant_location.latitude),
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421,
                   }}
@@ -295,18 +352,18 @@ class Delivery extends Component {
                   onDragEnd={(e) => {
                     // this.manageOnDragEnd(e)
                   }}
-                  title={order.merchant_location.route}
+                  title={data.merchant_location.route}
                 />                
               )
             }
 
 
             {
-              (order != null && order.location != null) && (
+              (data != null && data.location != null) && (
                 <Marker
                   coordinate={{
-                    longitude: parseFloat(order.location.longitude),
-                    latitude: parseFloat(order.location.latitude),
+                    longitude: parseFloat(data.location.longitude),
+                    latitude: parseFloat(data.location.latitude),
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421,
                   }}
@@ -314,7 +371,7 @@ class Delivery extends Component {
                   onDragEnd={(e) => {
                     // this.manageOnDragEnd(e)
                   }}
-                  title={order.location.route}
+                  title={data.location.route}
                 />                
               )
             }
@@ -342,14 +399,14 @@ class Delivery extends Component {
             zIndex: 100,
             backgroundColor: Color.white,
             minHeight: this.state.viewerHeight,
-            width: '94%',
-            bottom: 5,
-            left: '3%',
-            borderRadius: 5
+            width: '100%',
+            bottom: 0,
+            borderTopRightRadius: 5,
+            borderTopLeftRadius: 5
           }}>
-          { user !== null && this._order() }
+          { data !== null && this._order() }
           {
-            (user !== null && this.state.viewerHeight !== 70) && this._viewMore()
+            (data !== null && this.state.viewerHeight !== 70) && this._viewMore()
           }
           </View>
         </View>
