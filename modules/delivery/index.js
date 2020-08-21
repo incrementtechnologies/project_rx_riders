@@ -63,10 +63,23 @@ class Delivery extends Component {
         this.setState({
           data: response.data[0]
         })
+        if(response.data[0].location !== null){
+          this.setState({
+            region: {
+              ...this.state.region,
+              latitude: parseFloat(response.data[0].location.latitude),
+              longitude: parseFloat(response.data[0].location.longitude)
+            }
+          })
+        }
       }else{
         this.props.navigation.navigate('drawerStack');
       }
     })
+  }
+
+  completeOrder(){
+    const { data } = this.state;
   }
 
   viewMore = () => {
@@ -238,7 +251,7 @@ class Delivery extends Component {
               borderRadius: 5,
               marginBottom: 10
             }}
-            onPress={() => this.viewMore()}
+            onPress={() => this.completeOrder()}
             underlayColor={Color.primary}
             >
             <Text style={{
@@ -269,7 +282,8 @@ class Delivery extends Component {
           }}>
             <Text style={{
               textAlign: 'left',
-              width: '50%'
+              width: '50%',
+              fontWeight: 'bold'
             }}>{
               data.distance
             }</Text>
