@@ -20,6 +20,7 @@ import Settings from 'modules/settings';
 import Referral from 'modules/referral';
 import NewDelivery from 'modules/newDelivery';
 import { connect } from 'react-redux';
+import Ledger from 'modules/Ledger';
 
 class MenuDrawerContentStructure extends Component {
   constructor(props){
@@ -100,6 +101,21 @@ const Delivery_StackNavigator = createStackNavigator({
       headerTintColor: Color.primary,
     }),
   }
+});
+
+const Ledger_StackNavigator = createStackNavigator({
+  Ledger: {
+    screen: Ledger,
+    navigationOptions: ({ navigation }) => ({
+      title: 'Ledger',
+      headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
+      headerRight: <OptionRight navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: Color.white,
+      },
+      headerTintColor: Color.primary,
+    }),
+  },
 });
 
 const HelpCenter_StackNavigator = createStackNavigator({
@@ -225,6 +241,12 @@ const Drawer = createDrawerNavigator({
     screen: Delivery_StackNavigator,
     navigationOptions: {
       drawerLabel: 'My Deliveries',
+    },
+  },
+  Ledger: {
+    screen: Ledger_StackNavigator,
+    navigationOptions: {
+      drawerLabel: 'Ledger',
     },
   },
   HelpCenter: {
