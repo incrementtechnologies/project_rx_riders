@@ -21,6 +21,14 @@ export default {
     iconStyle: {
       color: Color.primary
     }
+  },
+  {
+    title: 'Ledger',
+    route: 'Ledger',
+    icon: faShippingFast,
+    iconStyle: {
+      color: Color.primary
+    }
   }, {
     title: 'My Profile',
     route: 'Profile',

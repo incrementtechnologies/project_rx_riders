@@ -19,6 +19,7 @@ import MyAddress from 'modules/myAddresses';
 import Settings from 'modules/settings';
 import Referral from 'modules/referral';
 import { connect } from 'react-redux';
+import Ledger from 'modules/Ledger';
 
 class MenuDrawerContentStructure extends Component {
   constructor(props){
@@ -79,6 +80,21 @@ const Delivery_StackNavigator = createStackNavigator({
     screen: Delivery,
     navigationOptions: ({ navigation }) => ({
       title: 'My Deliveries',
+      headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
+      headerRight: <OptionRight navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: Color.white,
+      },
+      headerTintColor: Color.primary,
+    }),
+  },
+});
+
+const Ledger_StackNavigator = createStackNavigator({
+  Ledger: {
+    screen: Ledger,
+    navigationOptions: ({ navigation }) => ({
+      title: 'Ledger',
       headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
       headerRight: <OptionRight navigationProps={navigation} />,
       headerStyle: {
@@ -212,6 +228,12 @@ const Drawer = createDrawerNavigator({
     screen: Delivery_StackNavigator,
     navigationOptions: {
       drawerLabel: 'My Deliveries',
+    },
+  },
+  Ledger: {
+    screen: Ledger_StackNavigator,
+    navigationOptions: {
+      drawerLabel: 'Ledger',
     },
   },
   HelpCenter: {

@@ -29,5 +29,8 @@ export default {
   checkoutRetrieve: apiUrl + 'checkouts/retrieve',
   //Deliveries
   deliveryCreate: apiUrl + 'deliveries/create',
-  deliveryRetrieve: apiUrl + 'deliveries/retrieve'
+  deliveryRetrieve: apiUrl + 'deliveries/retrieve',
+  //Notifs
+  notificationSettingsRetrieve: apiUrl + 'notification_settings/retrieve',
+  withdrawalCreate: apiUrl + 'withdrawals/create'
 }
