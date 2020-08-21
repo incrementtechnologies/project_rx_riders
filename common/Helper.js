@@ -7,14 +7,16 @@ export default {
   APP_EMAIL: 'support@runwayexpress.co.uk',
   APP_WEBSITE: 'www.runwayexpress.co.uk',
   APP_HOST: 'com.runwayexpressriders',
-  DrawerMenu: [{
-    title: 'Dashboard',
-    route: 'Dashboard',
-    icon: faTachometerAlt,
-    iconStyle: {
-      color: Color.primary
-    }
-  }, {
+  DrawerMenu: [
+  // {
+  //   title: 'Dashboard',
+  //   route: 'Dashboard',
+  //   icon: faTachometerAlt,
+  //   iconStyle: {
+  //     color: Color.primary
+  //   }
+  // },
+  {
     title: 'Deliveries',
     route: 'Delivery',
     icon: faShippingFast,
@@ -29,14 +31,16 @@ export default {
     iconStyle: {
       color: Color.primary
     }
-  }, {
-    title: 'My Profile',
-    route: 'Profile',
-    icon: faUser,
-    iconStyle: {
-      color: Color.primary
-    }
-  }],
+  }
+  // {
+  //   title: 'My Profile',
+  //   route: 'Profile',
+  //   icon: faUser,
+  //   iconStyle: {
+  //     color: Color.primary
+  //   }
+  // }
+  ],
   DrawerMenuLogout: [],
   DrawerMenuBottom: [{
     title: 'Settings',

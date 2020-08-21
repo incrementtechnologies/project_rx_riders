@@ -231,16 +231,16 @@ const Referral_StackNavigator = createStackNavigator({
 
 
 const Drawer = createDrawerNavigator({
-  Dashboard: {
-    screen: Dashboard_StackNavigator,
-    navigationOptions: {
-      drawerLabel: '',
-    },
-  },
   Delivery: {
     screen: Delivery_StackNavigator,
     navigationOptions: {
       drawerLabel: 'My Deliveries',
+    },
+  },
+  Dashboard: {
+    screen: Dashboard_StackNavigator,
+    navigationOptions: {
+      drawerLabel: '',
     },
   },
   Ledger: {
