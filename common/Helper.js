@@ -2,8 +2,8 @@ import Color from './Color.js';
 import { faEdit, faComments, faCheck, faPaperPlane, faUser, faTachometerAlt, faQuestionCircle, faUsers, faFile, faShippingFast } from '@fortawesome/free-solid-svg-icons';
 export default {
   company: 'Increment Technologies',
-  APP_NAME: '@RunwayExpressRides_',
-  APP_NAME_BASIC: 'RunwayExpressRides',
+  APP_NAME: '@RunwayExpressRiders_',
+  APP_NAME_BASIC: 'RunwayExpressRiders',
   APP_EMAIL: 'support@runwayexpress.co.uk',
   APP_WEBSITE: 'www.runwayexpress.co.uk',
   APP_HOST: 'com.runwayexpressriders',

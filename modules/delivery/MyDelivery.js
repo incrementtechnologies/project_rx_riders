@@ -221,7 +221,7 @@ class MyDelivery extends Component {
                           */}
 
                           <View style={{
-                            backgroundColor: Color.primary,
+                            backgroundColor: item.status != 'completed' ? Color.danger : Color.gray,
                             borderRadius: 5,
                             width: '30%',
                             marginTop: 5

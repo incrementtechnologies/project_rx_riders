@@ -34,8 +34,10 @@ export default {
   notificationSettingsRetrieve: apiUrl + 'notification_settings/retrieve',
   withdrawalCreate: apiUrl + 'withdrawals/create',
   myDeliveryRetrieve: apiUrl + 'deliveries/my_deliveries',
+  deliveryUpdate: apiUrl + 'deliveries/update',
   // Merchants
   merchantsRetrieve: apiUrl + 'merchants/retrieve',
   //Checkout
   checkoutRetrieveByRider: apiUrl + 'checkouts/retrieve_by_rider',
+  checkoutUpdate: apiUrl + 'checkouts/update'
 }

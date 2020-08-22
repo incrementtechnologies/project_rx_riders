@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, Image, TouchableHighlight, Text, ScrollView, FlatList, Dimensions, TouchableOpacity} from 'react-native';
+import {View, Image, TouchableHighlight, Text, ScrollView, FlatList, Dimensions, TouchableOpacity, Alert} from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Thumbnail, List, ListItem, Separator } from 'native-base';
 import { connect } from 'react-redux';
@@ -78,8 +78,68 @@ class Delivery extends Component {
     })
   }
 
-  completeOrder(){
+  continueCompleteOrder(){
     const { data } = this.state;
+    const { order } = this.props.state;
+    if(data == null){
+      // unable to update
+      Alert.alert(
+        "Error Message",
+        "Incomplete data, unable to update!",
+        [
+          { text: "OK", onPress: () => {}}
+        ],
+        { cancelable: true }
+      );
+      return
+    }
+    let parameter = {
+      id: order.id,
+      status: 'completed'
+    }
+    Api.request(Routes.deliveryUpdate, parameter, response => {
+      if(response.data == true){
+        Alert.alert(
+          "Success Message",
+          "Transaction completed!",
+          [
+            { text: "OK", onPress: () => {}}
+          ],
+          { cancelable: true }
+        );
+        let order = {
+          ...order,
+          status: 'completed'
+        }
+        const { setOrder} =  this.props;
+        setOrder(order)
+      }else{
+        Alert.alert(
+          "Error Message",
+          "Unable to update.",
+          [
+            { text: "OK", onPress: () => {}}
+          ],
+          { cancelable: true }
+        );
+      }
+    })
+  }
+
+  completeOrder(){
+    Alert.alert(
+      "Confirmation Message",
+      "Are you sure you want to continue this action?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => this.continueCompleteOrder()}
+      ],
+      { cancelable: false }
+    );
   }
 
   viewMore = () => {
@@ -95,6 +155,7 @@ class Delivery extends Component {
 
   _viewMore = () => {
     const { data } = this.state;
+    const { order } = this.props.state;
     return (
         <View style={{
           width: '100%',
@@ -240,24 +301,44 @@ class Delivery extends Component {
               }
             </Text>
           </View>
-          <TouchableOpacity style={{
-              width: '100%',
-              paddingLeft: 10,
-              paddingRight: 10,
-              backgroundColor: Color.primary,
-              height: 50,
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: 5,
-              marginBottom: 10
-            }}
-            onPress={() => this.completeOrder()}
-            underlayColor={Color.primary}
-            >
-            <Text style={{
-              color: Color.white
-            }}>Complete</Text>
-          </TouchableOpacity>
+          {
+            order.status === 'completed' && (
+              <View style={[Style.borderTop, {
+                flexDirection: 'row'
+              }]}>
+                <Text style={[BasicStyles.normalFontSize, {
+                  width: '100%',
+                  textAlign: 'center',
+                  fontWeight: 'bold'
+                }]}>
+                  {order.status.toUpperCase()} 
+                </Text>
+              </View>
+            )
+          }
+          {
+            order.status != 'completed' && (
+              <TouchableOpacity style={{
+                  width: '100%',
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  backgroundColor: Color.primary,
+                  height: 50,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 5,
+                  marginBottom: 10
+                }}
+                onPress={() => this.completeOrder()}
+                underlayColor={Color.primary}
+                >
+                <Text style={{
+                  color: Color.white
+                }}>Complete</Text>
+              </TouchableOpacity>
+            )
+          }
+          
         </View>
     )
   }
@@ -404,9 +485,6 @@ class Delivery extends Component {
               )*/
             }
 
-            
-            
-
           </MapView>
           <View style={{
             position: 'absolute',
@@ -433,7 +511,9 @@ const mapStateToProps = state => ({state: state});
 
 const mapDispatchToProps = dispatch => {
   const {actions} = require('@redux');
-  return {};
+  return {
+    setOrder: (order) => dispatch(actions.setOrder(order))
+  };
 };
 
 export default connect(
