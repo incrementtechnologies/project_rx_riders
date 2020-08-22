@@ -22,7 +22,7 @@ class Delivery extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      viewerHeight: 70,
+      viewerHeight: 50,
       region: {
         latitude: 10.342326,
         longitude: 123.8957059,
@@ -498,7 +498,7 @@ class Delivery extends Component {
           }}>
           { data !== null && this._order() }
           {
-            (data !== null && this.state.viewerHeight !== 70) && this._viewMore()
+            (data !== null && this.state.viewerHeight !== 50) && this._viewMore()
           }
           </View>
         </View>

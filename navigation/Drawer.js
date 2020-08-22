@@ -61,22 +61,7 @@ const mapDispatchToProps = dispatch => {
 
 let MenuDrawerStructure = connect(mapStateToProps, mapDispatchToProps)(MenuDrawerContentStructure);
 
- 
-const Dashboard_StackNavigator = createStackNavigator({
-  Dashboard: {
-    screen: Dashboard,
-    navigationOptions: ({ navigation }) => ({
-      headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
-      headerRight: <OptionRight navigationProps={navigation} />,
-      headerStyle: {
-        backgroundColor: 'transparent',
-      },
-      headerTransparent: true
-    }),
-  },
-});
-
-const Delivery_StackNavigator = createStackNavigator({
+const StackNavigator = createStackNavigator({
   Delivery: {
     screen: Delivery,
     navigationOptions: ({ navigation }) => ({
@@ -100,10 +85,7 @@ const Delivery_StackNavigator = createStackNavigator({
       },
       headerTintColor: Color.primary,
     }),
-  }
-});
-
-const Ledger_StackNavigator = createStackNavigator({
+  },
   Ledger: {
     screen: Ledger,
     navigationOptions: ({ navigation }) => ({
@@ -116,9 +98,17 @@ const Ledger_StackNavigator = createStackNavigator({
       headerTintColor: Color.primary,
     }),
   },
-});
-
-const HelpCenter_StackNavigator = createStackNavigator({
+  Dashboard: {
+    screen: Dashboard,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
+      headerRight: <OptionRight navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: 'transparent',
+      },
+      headerTransparent: true
+    }),
+  },
   HelpCenter: {
     screen: HelpCenter,
     navigationOptions: ({ navigation }) => ({
@@ -130,9 +120,6 @@ const HelpCenter_StackNavigator = createStackNavigator({
       headerTintColor: '#fff',
     }),
   },
-});
-
-const Privacy_StackNavigator = createStackNavigator({
   PrivacyPolicy: {
     screen: PrivacyPolicy,
     navigationOptions: ({ navigation }) => ({
@@ -144,8 +131,6 @@ const Privacy_StackNavigator = createStackNavigator({
       headerTintColor: '#fff',
     }),
   },
-});
-const Terms_StackNavigator = createStackNavigator({
   TermsAndConditions: {
     screen: TermsAndConditions,
     navigationOptions: ({ navigation }) => ({
@@ -157,9 +142,17 @@ const Terms_StackNavigator = createStackNavigator({
       headerTintColor: '#fff',
     }),
   },
-});
-
-const Notification_StackNavigator = createStackNavigator({
+  TermsAndConditions: {
+    screen: TermsAndConditions,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
+      headerRight: <OptionRight navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: Color.white,
+      },
+      headerTintColor: '#fff',
+    }),
+  },
   Notification: {
     screen: Notification,
     navigationOptions: ({ navigation }) => ({
@@ -171,9 +164,6 @@ const Notification_StackNavigator = createStackNavigator({
       headerTintColor: '#fff',
     }),
   },
-});
-
-const Profile_StackNavigator = createStackNavigator({
   Profile: {
     screen: Profile,
     navigationOptions: ({ navigation }) => ({
@@ -185,23 +175,6 @@ const Profile_StackNavigator = createStackNavigator({
       headerTintColor: '#fff',
     }),
   },
-});
-
-const MyAddress_StackNavigator = createStackNavigator({
-  MyAddress: {
-    screen: MyAddress,
-    navigationOptions: ({ navigation }) => ({
-      headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
-      headerRight: <OptionRight navigationProps={navigation} />,
-      headerStyle: {
-        backgroundColor: Color.white,
-      },
-      headerTintColor: '#fff',
-    }),
-  },
-});
-
-const Settings_StackNavigator = createStackNavigator({
   Settings: {
     screen: Settings,
     navigationOptions: ({ navigation }) => ({
@@ -213,9 +186,6 @@ const Settings_StackNavigator = createStackNavigator({
       headerTintColor: '#fff',
     }),
   },
-});
-
-const Referral_StackNavigator = createStackNavigator({
   InviteFriends: {
     screen: Referral,
     navigationOptions: ({ navigation }) => ({
@@ -229,74 +199,61 @@ const Referral_StackNavigator = createStackNavigator({
   },
 });
 
-
 const Drawer = createDrawerNavigator({
   Delivery: {
-    screen: Delivery_StackNavigator,
+    screen: StackNavigator,
     navigationOptions: {
       drawerLabel: 'My Deliveries',
     },
   },
   Dashboard: {
-    screen: Dashboard_StackNavigator,
+    screen: StackNavigator,
     navigationOptions: {
       drawerLabel: '',
     },
   },
   Ledger: {
-    screen: Ledger_StackNavigator,
+    screen: StackNavigator,
     navigationOptions: {
       drawerLabel: 'Ledger',
     },
   },
   HelpCenter: {
-    screen: HelpCenter_StackNavigator,
+    screen: StackNavigator,
     navigationOptions: {
       drawerLabel: '',
     },
   },
   Profile: {
-    screen: Profile_StackNavigator,
-    navigationOptions: {
-      drawerLabel: '',
-    },
-  },
-  MyAddress: {
-    screen: MyAddress_StackNavigator,
+    screen: StackNavigator,
     navigationOptions: {
       drawerLabel: '',
     },
   },
   TermsAndConditions: {
-    screen: Terms_StackNavigator,
+    screen: StackNavigator,
     navigationOptions: {
       drawerLabel: '',
     },
   },
   PrivacyPolicy: {
-    screen: Privacy_StackNavigator,
+    screen: StackNavigator,
     navigationOptions: {
       drawerLabel: '',
     },
   },
   Notification: {
-    screen: Notification_StackNavigator,
+    screen: StackNavigator,
     navigationOptions: {
       drawerLabel: '',
     },
   },
   Settings: {
-    screen: Settings_StackNavigator,
+    screen: StackNavigator,
     navigationOptions: {
       drawerLabel: '',
     },
   },
-  InviteFriends: {
-    screen: Referral_StackNavigator,
-    navigationOptions: {
-      drawerLabel: '',
-    }
-  }
 }, {
   contentComponent: Slider
 });
