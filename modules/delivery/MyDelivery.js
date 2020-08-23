@@ -167,6 +167,8 @@ class MyDelivery extends Component {
                               textAlign: 'right'
                             }]}>
                             {
+                              item.checkout.shipping_fee &&
+                              item.checkout.currency &&
                               Currency.display(item.checkout.shipping_fee, item.checkout.currency)
                             }
                             </Text>
