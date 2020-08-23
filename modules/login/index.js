@@ -1,13 +1,21 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
-import { View , TextInput , Image, TouchableHighlight, Text, ScrollView, Platform} from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableHighlight,
+  Text,
+  ScrollView,
+  Platform,
+  AppState,
+  Alert
+} from 'react-native';
 import {NavigationActions} from 'react-navigation';
 import Style from './Style.js';
 import { Spinner } from 'components';
 import CustomError from 'components/Modal/Error.js';
 import Api from 'services/api/index.js';
-import CommonRequest from 'services/CommonRequest.js';
 import { Routes, Color, Helper, BasicStyles } from 'common';
 import PasswordWithIcon from 'components/InputField/Password.js';
 import Header from '../basics/Header'
@@ -16,7 +24,7 @@ import Pusher from 'services/Pusher.js';
 import SystemVersion from 'services/System.js';
 import { Player } from '@react-native-community/audio-toolkit';
 import OtpModal from 'components/Modal/Otp.js';
-import {Notifications, NotificationAction, NotificationCategory} from 'react-native-notifications';
+import { Notifications } from 'react-native-notifications';
 
 class Login extends Component {
   //Screen1 Component
@@ -32,13 +40,16 @@ class Login extends Component {
       responseErrorMessage: null,
       isOtpModal: false,
       blockedFlag: false,
-      notifications: []
+      notifications: [],
+      appState: AppState.currentState
     };
     this.audio = null;
     this.registerNotificationEvents();
   }
-  
+
   async componentDidMount(){
+    AppState.addEventListener('change', this._handleAppStateChange);
+
     if(config.versionChecker == 'store'){
       this.setState({isLoading: true})
       SystemVersion.checkVersion(response => {
@@ -56,6 +67,14 @@ class Login extends Component {
       this.setState({notifications: [initialNotification, ...this.state.notifications]});
     }
   }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = appState => {
+    this.setState({ appState });
+  };
 
   retrieveSystemNotification = () => {
     let parameter = {
@@ -167,6 +186,7 @@ class Login extends Component {
 
   managePusherResponse = (response) => {
     const { user } = this.props.state;
+    const { appState } = this.state;
     const data = response.data;
     if(user == null){
       return;
@@ -181,8 +201,24 @@ class Login extends Component {
         updateNotifications(1, data);
         this.playAudio()
       }
-    } else if(response.type == Helper.pusher.rider){
-      console.log({ response })
+    } else if(response.type == Helper.pusher.rider) {
+      if (appState === 'active') {
+        Alert.alert(
+        `Hello ${user.username}!`,
+        "A new delivery is available!",
+        [
+          { text: "VIEW", onPress: () => {
+            const navigateAction = NavigationActions.navigate({
+              routeName: 'NewDelivery',
+              params: response
+            });
+            this.props.navigation.dispatch(navigateAction); 
+          } },
+          { text: "CANCEL", onPress: () => this.props.navigation.navigate('Delivery') }
+        ],
+        { cancelable: false }
+        );
+      }
       this.sendLocalNotification('New delivery!', 'Click to accept/decline', 'Delivery', response)
       this.playAudio()
     }
