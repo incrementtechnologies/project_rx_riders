@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, Image, TouchableHighlight, Text, ScrollView, FlatList, Dimensions, TouchableOpacity} from 'react-native';
+import {View, Image, TouchableHighlight, Text, ScrollView, FlatList, Dimensions, TouchableOpacity, ToastAndroid} from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Thumbnail, List, ListItem, Separator } from 'native-base';
 import { connect } from 'react-redux';
@@ -22,15 +22,18 @@ class MyDelivery extends Component {
     this.state = {
       data: null,
       isLoading: false,
-      selected: null
+      selected: null,
+      offset: 0,
+      limit: 5
     } 
   }
 
   componentDidMount(){
-    this.retrieve()
+    this.retrieve(this.state.offset)
   }
 
-  retrieve(){
+  retrieve(active){
+    let page = active
     const { user } = this.props.state;
     if(user == null){
       return
@@ -46,7 +49,9 @@ class MyDelivery extends Component {
       }],
       sort: {
         created_at: 'desc'
-      }
+      },
+      limit: this.state.limit,
+      offset: (page * this.state.limit)
     }
     console.log('parameter', parameter)
     Api.request(Routes.myDeliveryRetrieve, parameter, response => {
@@ -58,36 +63,25 @@ class MyDelivery extends Component {
       // if(response.data.length > 0){
       // temporary --- (false)
       if (response.data.length > 0) {
+        if(active == 0){
+          this.setState({
+            data: response.data
+          }) 
+        }else{
+          let previousData = this.state.data
+          previousData.push(...response.data)
+          this.setState({
+            data: previousData
+          })
+        }
         this.setState({
-          data: response.data
+          offset: page + 1
         })
+        console.log('new offset', this.state.offset)
       } else {
-        this.setState({
-          data: [{
-            account: {
-              first_name: 'Kennette',
-              last_name: 'Canales'
-            },
-            location: {
-              route: 'Casili',
-              latitude: 10.384326,
-              longitude: 123.9310962
-            },
-            checkout: {
-              order_number: '1234',
-              sub_total: 150,
-              total: 200,
-              shipping_fee: 50,
-              currency: 'PHP'
-            },
-            merchant_location: {
-              route: 'McDo',
-              latitude: 10.342326,
-              longitude: 123.8957059
-            },
-            status: 'pending'
-          }]
-        })
+        if(active > 0){
+          ToastAndroid.show('Nothing follows!', ToastAndroid.LONG);
+        }
       }
     }, error => {
       console.log('error', error)
@@ -108,12 +102,21 @@ class MyDelivery extends Component {
       <ScrollView
         style={Style.ScrollView}
         onScroll={(event) => {
+          let scrollingHeight = event.nativeEvent.layoutMeasurement.height + event.nativeEvent.contentOffset.y
+          let totalHeight = event.nativeEvent.contentSize.height - 20
           if(event.nativeEvent.contentOffset.y <= 0) {
-            this.retrieve()
+            this.retrieve(0)
+          }
+          if(scrollingHeight >= totalHeight) {
+            if(this.state.isLoading == false){
+              this.retrieve(this.state.offset)
+            }
           }
         }}
         >
-        {isLoading ? <Spinner mode="overlay"/> : null }
+        {isLoading ? <Spinner mode="overlay" style={{
+          zIndex: 100
+        }}/> : null }
         {data == null && (<Empty refresh={true} onRefresh={() => this.retrieve()}/>)}
         <View style={[Style.MainContainer, {
           minHeight: height
