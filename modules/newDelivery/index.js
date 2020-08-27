@@ -9,6 +9,7 @@ import {
   Alert
 } from 'react-native';
 import { connect } from 'react-redux';
+import { NavigationActions } from 'react-navigation'
 import { Empty } from 'components';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -59,7 +60,7 @@ class newDelivery extends Component {
         }]
       }, response => {
         if (response.data.length) {
-          this.setState({ delivery_details: response.data[0] })
+          this.setState({ delivery_details: response.data[0], isLoading: false })
         }
       }, error => {
         console.log({ errorRetrievingCheckout: error })
@@ -82,21 +83,25 @@ class newDelivery extends Component {
   }
 
   acceptDelivery() {
+    const { delivery_details } = this.state;
     const { user } = this.props.state;
     const { navigate } = this.props.navigation;
     const { data } = this.props.navigation.state.params
     if (user == null) {
       Alert.alert('You must login first')
+      const proceedToLogin = NavigationActions.navigate({
+        routeName: 'loginStack'
+      });
+      this.props.navigation.dispatch(proceedToLogin)
       return
     }
 
     const parameter = {
-      account_id: parseInt(user.id),
+      account_id: parseInt(delivery_details.account_id),
       checkout_id: parseInt(data.checkout_id),
-      merchant_id: parseInt(data.merchant_id),
+      merchant_id: parseInt(delivery_details.merchant_id),
       rider: parseInt(user.id),
     }
-    console.log({ deliveryCreateParameter: parameter })
     this.setState({ isLoading: true })
     Api.request(Routes.deliveryCreate, parameter, response => {
       if (response.data) {
@@ -127,7 +132,6 @@ class newDelivery extends Component {
   }
 
   render() {
-    const { user } = this.props.state;
     const { navigate } = this.props.navigation;
     const { isLoading } = this.state;
     const { merchant_details, delivery_details } = this.state;
