@@ -28,8 +28,7 @@ class newDelivery extends Component {
     super(props);
     this.state = {
       isLoading: false,
-      delivery_details: null,
-      merchant_details: null
+      delivery_details: null
     } 
   }
 
@@ -59,25 +58,12 @@ class newDelivery extends Component {
           value: data.checkout_id
         }]
       }, response => {
+        console.log({ response })
         if (response.data.length) {
           this.setState({ delivery_details: response.data[0], isLoading: false })
         }
       }, error => {
         console.log({ errorRetrievingCheckout: error })
-      })
-
-      Api.request(Routes.merchantsRetrieve, {
-        condition: [{
-          column: 'id',
-          clause: '=',
-          value: data.merchant_id
-        }]
-      }, response => {
-        if (response.data.length) {
-          this.setState({ merchant_details: response.data[0], isLoading: false })
-        }
-      }, error => {
-        console.log({ errorRetrievingMerchant: error })
       })
     }
   }
@@ -134,7 +120,7 @@ class newDelivery extends Component {
   render() {
     const { navigate } = this.props.navigation;
     const { isLoading } = this.state;
-    const { merchant_details, delivery_details } = this.state;
+    const { delivery_details } = this.state;
 
     return (
       <ScrollView
@@ -150,7 +136,7 @@ class newDelivery extends Component {
 
         {isLoading ? <Spinner mode="full"/> : null }
 
-        {merchant_details == null && delivery_details == null && (
+        {delivery_details == null && (
           <Empty refresh={true} onRefresh={() => this.retrieve()}/>
         )}
 
@@ -160,114 +146,95 @@ class newDelivery extends Component {
           alignItems: 'center'
         }]}>
           {
-            merchant_details && (
-              <View style={{
-                width: '90%',
-                minHeight: 400,
-                borderWidth: 0.5,
-                borderRadius: 5,
-                padding: 20
-              }}>
-                <View style={{ alignItems: 'center' }}>
-                  {
-                    // merchant_details.logo
-                    false
-                    ? (
-                        <Image
-                          source={{uri: Config.BACKEND_URL  + merchant_details.logo }}
-                          style={{
-                            height: 100,
-                            width: 100,
-                            borderRadius: 50
-                          }}
-                        />
-                      )
-                    : (
-                        <FontAwesomeIcon
-                          icon={faUserCircle}
-                          size={100}
-                          style={{
-                            color: Color.primary
-                          }}
-                        />
-                      )
-                  }
-                  <Text style={{ fontSize: 16, marginTop: 5 }}>
-                    New Delivery!
-                  </Text>
-                  <Text style={{ fontSize: 11 }}>
-                    {`from ${merchant_details.name || ''}`}
-                  </Text>
-                </View>
-
-                {
-                  delivery_details
-                  ? (
-                      <>
-                        <View style={{ alignItems: 'center', marginTop: 20 }}>
-                          <View>
-                            <Text style={{ color: Color.darkGray }}>
-                              Order #:
-                              <Text style={{ color: '#000' }}>
-                                {` ${delivery_details.order_number || 'No data'}`}
-                              </Text>
-                            </Text>
-                            <Text style={{ color: Color.darkGray }}>
-                              Deliver to:
-                              <Text style={{ color: '#000' }}>
-                                {` ${delivery_details.location || 'Not specified'}`}
-                              </Text>
-                            </Text>
-                            <Text style={{ color: Color.darkGray }}>
-                              Type:
-                              <Text style={{ color: '#000', textTransform: 'uppercase' }}>
-                                { ` ${delivery_details.type || 'COD'}` }
-                              </Text>
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={{ alignItems: 'center', marginTop: 20 }}>
-                          <TouchableOpacity onPress={() => this.acceptDelivery()}>
-                            <View style={{ 
-                              paddingVertical: 10,
-                              paddingHorizontal: 50,
-                              margin: 10,
-                              color: Color.white,
-                              backgroundColor: Color.primary,
-                              borderRadius: 5
-                            }}>
-                              <Text style={{
-                                color: Color.primary === '#003049' ? '#fff' : '#000'
-                              }}>
-                                ACCEPT
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
-                          <TouchableOpacity onPress={() => navigate('Delivery')}>
-                            <View
-                              style={{
-                                paddingVertical: 10,
-                                paddingHorizontal: 50,
-                                margin: 10,
-                                color: Color.white,
-                                backgroundColor: Color.warning,
-                                borderRadius: 5
-                              }}
-                            >
-                              <Text>DECLINE</Text>
-                            </View>
-                          </TouchableOpacity>
-                        </View> 
-                      </>
-                    )
-                  : (
-                      <Text style={{ textAlign: 'center', marginTop: 20 }}>
-                        Loading..
+            delivery_details
+            ? (
+                <>
+                  <View style={{
+                    alignItems: 'center',
+                    marginTop: 10,
+                    borderWidth: 1,
+                    padding: 15,
+                    borderRadius: 5,
+                    borderColor: Color.primary
+                  }}>
+                    <View>
+                      <Text style={{ color: Color.darkGray }}>
+                        Order #:
+                        <Text style={{ color: '#000' }}>
+                          {` ${delivery_details.order_number || 'No data'}`}
+                        </Text>
                       </Text>
-                    )
-                }
-              </View>
-            )
+                      <Text style={{ color: Color.darkGray }}>
+                        Receiver:
+                        <Text style={{ color: '#000' }}>
+                          {` ${delivery_details.name || 'Not specified'}`}
+                        </Text>
+                      </Text>
+                      <Text style={{ color: Color.darkGray }}>
+                        Deliver from:
+                        <Text style={{ color: '#000' }}>
+                          {` ${delivery_details.merchant_location.route  || ''} ${delivery_details.merchant_location.locality  || ''}`}
+                        </Text>
+                      </Text>
+                      <Text style={{ color: Color.darkGray }}>
+                        Deliver to:
+                        <Text style={{ color: '#000' }}>
+                          {` ${delivery_details.location.route  || ''} ${delivery_details.location.locality  || ''}`}
+                        </Text>
+                      </Text>
+                      <Text style={{ color: Color.darkGray }}>
+                        With distance of:
+                        <Text style={{ color: '#000' }}>
+                          {` ${delivery_details.distance || 'No data'}`}
+                        </Text>
+                      </Text>
+                      <Text style={{ color: Color.darkGray }}>
+                        Type:
+                        <Text style={{ color: '#000', textTransform: 'uppercase' }}>
+                          { ` ${delivery_details.type || 'No data'}` }
+                        </Text>
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={{ alignItems: 'center', marginTop: 20 }}>
+                    <TouchableOpacity onPress={() => this.acceptDelivery()}>
+                      <View style={{ 
+                        paddingVertical: 10,
+                        paddingHorizontal: 50,
+                        margin: 10,
+                        color: Color.white,
+                        backgroundColor: Color.primary,
+                        borderRadius: 5
+                      }}>
+                        <Text style={{
+                          color: Color.primary === '#003049' ? '#fff' : '#000'
+                        }}>
+                          ACCEPT
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigate('Delivery')}>
+                      <View
+                        style={{
+                          paddingVertical: 10,
+                          paddingHorizontal: 50,
+                          margin: 10,
+                          color: Color.white,
+                          backgroundColor: Color.warning,
+                          borderRadius: 5
+                        }}
+                      >
+                        <Text>DECLINE</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View> 
+                </>
+              )
+            : (
+                <Text style={{ textAlign: 'center', marginTop: 20 }}>
+                  Loading..
+                </Text>
+              )
           }
         </View>
       </ScrollView>

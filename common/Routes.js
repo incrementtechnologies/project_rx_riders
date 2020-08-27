@@ -26,7 +26,7 @@ export default {
   imageRetrieve: apiUrl + 'images/retrieve',
   // checkout
   checkoutCreate: apiUrl + 'checkouts/create',
-  checkoutRetrieve: apiUrl + 'checkouts/retrieve_orders',
+  checkoutRetrieve: apiUrl + 'checkouts/retrieve_by_rider',
   // Deliveries
   deliveryCreate: apiUrl + 'deliveries/create',
   deliveryRetrieve: apiUrl + 'deliveries/retrieve',
