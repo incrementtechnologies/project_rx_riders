@@ -166,7 +166,6 @@ class Login extends Component {
     });
   }
 
-
   test = () => {
     if(config.TEST == true){
       this.props.navigation.navigate('drawerStack');
@@ -202,6 +201,7 @@ class Login extends Component {
         this.playAudio()
       }
     } else if(response.type == Helper.pusher.rider) {
+      if (response.data.hasOwnProperty('assigned_rider')) return
       if (appState === 'active') {
         Alert.alert(
         `Hello ${user.username}!`,
@@ -219,7 +219,12 @@ class Login extends Component {
         { cancelable: false }
         );
       }
-      this.sendLocalNotification('New delivery!', 'Click to accept/decline', 'Delivery', response)
+      this.sendLocalNotification(
+        'New delivery from RunwayExpress!',
+        `Hi there ${user.username}! click to Accept/Decline`,
+        'Delivery',
+        response
+      )
       this.playAudio()
     }
   }
