@@ -20,10 +20,7 @@ import Otp from 'components/Modal/Otp.js';
 
 const width = Math.round(Dimensions.get('window').width);
 const height = Math.round(Dimensions.get('window').height);
-const balance =[
-{balance:"2000.80", currency:"PHP"},
-{balance:"100.45", currency:"USD"},
-]
+
 class Ledgers extends Component {
   constructor(props) {
     super(props);
@@ -34,9 +31,37 @@ class Ledgers extends Component {
       isOtpModal:false,
       transferModal:false,
       type:"PHP",
+      balance:[],
     } 
   }
 
+  componentDidMount=()=>
+  {
+    if(this.props.state.user!=null)
+    {
+      this.retrieve()
+    }
+  }
+
+  retrieve = () => {
+    const { user } = this.props.state;
+  
+    const parameter = {
+      account_id:user.id,
+      account_code:user.code
+
+    }
+    this.setState({
+      isLoading: true
+    })
+    Api.request(Routes.ledgerSummary, parameter, response => {
+      this.setState({isLoading: false})
+      console.log('test',response)
+      this.setState({balance:response.data})
+    },error => {
+      console.log(error)
+    });
+  }
 
   balanceRender=(details)=>
   {
@@ -211,6 +236,7 @@ onSuccess=()=>
   render() {
     const { user, isLoading } = this.props.state; 
     const { data, selected } = this.state;
+    const {balance}=this.state;
     return (
       <ScrollView
         style={styles.ScrollView}
