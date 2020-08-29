@@ -1,20 +1,22 @@
 import Color from './Color.js';
-import { faEdit, faComments, faCheck, faPaperPlane, faUser, faTachometerAlt, faQuestionCircle, faUsers, faFile, faShippingFast } from '@fortawesome/free-solid-svg-icons';
+import { faCreditCard, faEdit, faComments, faCheck, faPaperPlane, faUser, faTachometerAlt, faQuestionCircle, faUsers, faFile, faShippingFast } from '@fortawesome/free-solid-svg-icons';
 export default {
   company: 'Increment Technologies',
-  APP_NAME: '@RunwayExpressRides_',
-  APP_NAME_BASIC: 'RunwayExpressRides',
+  APP_NAME: '@RunwayExpressRiders_',
+  APP_NAME_BASIC: 'RunwayExpressRiders',
   APP_EMAIL: 'support@runwayexpress.co.uk',
   APP_WEBSITE: 'www.runwayexpress.co.uk',
   APP_HOST: 'com.runwayexpressriders',
-  DrawerMenu: [{
-    title: 'Dashboard',
-    route: 'Dashboard',
-    icon: faTachometerAlt,
-    iconStyle: {
-      color: Color.primary
-    }
-  }, {
+  DrawerMenu: [
+  // {
+  //   title: 'Dashboard',
+  //   route: 'Dashboard',
+  //   icon: faTachometerAlt,
+  //   iconStyle: {
+  //     color: Color.primary
+  //   }
+  // },
+  {
     title: 'Deliveries',
     route: 'Delivery',
     icon: faShippingFast,
@@ -25,18 +27,20 @@ export default {
   {
     title: 'Ledger',
     route: 'Ledger',
-    icon: faShippingFast,
+    icon: faCreditCard,
     iconStyle: {
       color: Color.primary
     }
-  }, {
-    title: 'My Profile',
-    route: 'Profile',
-    icon: faUser,
-    iconStyle: {
-      color: Color.primary
-    }
-  }],
+  }
+  // {
+  //   title: 'My Profile',
+  //   route: 'Profile',
+  //   icon: faUser,
+  //   iconStyle: {
+  //     color: Color.primary
+  //   }
+  // }
+  ],
   DrawerMenuLogout: [],
   DrawerMenuBottom: [{
     title: 'Settings',
