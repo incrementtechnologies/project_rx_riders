@@ -39,5 +39,6 @@ export default {
   merchantsRetrieve: apiUrl + 'merchants/retrieve',
   //Checkout
   checkoutRetrieveByRider: apiUrl + 'checkouts/retrieve_by_rider',
-  checkoutUpdate: apiUrl + 'checkouts/update'
+  ledgerSummary: apiUrl+ 'ledger/summary',
+  checkoutUpdate: apiUrl + 'checkouts/update',
 }
