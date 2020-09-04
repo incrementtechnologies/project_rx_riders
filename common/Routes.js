@@ -41,4 +41,5 @@ export default {
   checkoutRetrieveByRider: apiUrl + 'checkouts/retrieve_by_rider',
   ledgerSummary: apiUrl+ 'ledger/summary',
   checkoutUpdate: apiUrl + 'checkouts/update',
+  ledgerHistory:apiUrl + 'ledger/history',
 }
