@@ -16,7 +16,13 @@ import Api from 'services/api/index.js';
 import {ledgerData} from './ledger-data-test';
 import {Ledger} from 'components/Ledger'
 import Otp from 'components/Modal/Otp.js';
+import _ from 'lodash';
 
+const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+  const paddingToBottom = 0;
+  return layoutMeasurement.height + contentOffset.y >=
+    contentSize.height - paddingToBottom;
+};
 
 const width = Math.round(Dimensions.get('window').width);
 const height = Math.round(Dimensions.get('window').height);
@@ -31,7 +37,10 @@ class Ledgers extends Component {
       isOtpModal:false,
       transferModal:false,
       type:"PHP",
+      limit:5,
+      offset:0,
       balance:[],
+      history:[],
     } 
   }
 
@@ -39,25 +48,50 @@ class Ledgers extends Component {
   {
     if(this.props.state.user!=null)
     {
-      this.retrieve()
+      this.retrieve({offset:this.state.offset})
     }
   }
 
-  retrieve = () => {
+  retrieve = ({offset}) => {
     const { user } = this.props.state;
   
     const parameter = {
       account_id:user.id,
       account_code:user.code
-
+    }
+    const parameter2 = {
+      account_id:user.id,
+      account_code:user.code,
+      limit:this.state.limit,
+      offset:offset,
     }
     this.setState({
       isLoading: true
     })
     Api.request(Routes.ledgerSummary, parameter, response => {
-      this.setState({isLoading: false})
-      console.log('test',response)
+     
       this.setState({balance:response.data})
+      this.setState({isLoading: false})
+    },error => {
+      console.log(error)
+    });
+
+    Api.request(Routes.ledgerHistory, parameter2, response => {
+      if (response.data.length > 0) {
+        
+        const joined = _.uniqBy([...this.state.history, ...response.data],'code')
+        console.log(joined)
+        this.setState({
+          isLoading: false,
+          history: joined,
+        })        
+      }
+
+
+
+
+
+
     },error => {
       console.log(error)
     });
@@ -242,6 +276,7 @@ onSuccess=()=>
         style={styles.ScrollView}
     
         >
+          
           <Image
             source={require("../../assets/logo-alt.png")}
            style={{marginTop:20,height:80,width:80, alignSelf:'center'}} /> 
@@ -251,12 +286,21 @@ onSuccess=()=>
           </View>
         
 
-          <View style={{paddingHorizontal:20,marginTop:15}}>
+          <ScrollView style={{paddingHorizontal:20,marginTop:15,height:190,backgroundColor:'#EDEDED'}} 
+           onScroll={({nativeEvent}) => {
+         if (isCloseToBottom(nativeEvent)) {
+       
+        this.retrieve({offset:this.state.offset+5})
+      }
+    }}
+    scrollEventThrottle={400}>
+      
      
-        {ledgerData.map((details)=>(
+        {this.state.history.map((details)=>(
             <Ledger details={details} key={details.id}/>
           ))}
-          </View>
+          {this.state.isLoading ? <Spinner mode="full" /> : null}
+          </ScrollView>
 
           <View style={{justifyContent:'center',width:'100%',flexDirection:'row',backgroundColor:'white',height:90}}>
       <TouchableOpacity
