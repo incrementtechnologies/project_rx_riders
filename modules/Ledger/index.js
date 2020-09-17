@@ -41,6 +41,7 @@ class Ledgers extends Component {
       offset:0,
       balance:[],
       history:[],
+      location:0,
     } 
   }
 
@@ -50,6 +51,8 @@ class Ledgers extends Component {
     {
       this.retrieve({offset:this.state.offset})
     }
+  
+
   }
 
   retrieve = ({offset}) => {
@@ -110,7 +113,7 @@ class Ledgers extends Component {
     )
   }
 
- OTPmodalOpen=()=>
+ OTPmodalOpen=(resend)=>
  {
   
   this.setState({ isLoading: true })
@@ -126,6 +129,7 @@ class Ledgers extends Component {
     charge:0,
   }
 
+
   this.setState({ isLoading: false })
   console.log(parameter)
   Api.request(Routes.withdrawalCreate, parameter, response => {
@@ -136,9 +140,14 @@ class Ledgers extends Component {
     console.log({ error })
   })
 
-  
+  if(resend==false)
+  {
   this.setState({isOtpModal:true})
+  }
+ 
  }
+
+ 
 
  transferModalOpen=()=>
  {
@@ -158,7 +167,7 @@ class Ledgers extends Component {
             alignItems: 'flex-end',
             justifyContent: 'center'
           }}>
-            <TouchableOpacity onPress={() => alert("Cancel")} style={styles.close}>
+            <TouchableOpacity onPress={() => this.setState({transferModal:false})} style={styles.close}>
               <FontAwesomeIcon icon={ faTimes } style={{
                 color: Color.danger
               }} size={BasicStyles.iconSize} />
@@ -246,7 +255,7 @@ class Ledgers extends Component {
             borderLeftWidth: 1
           }}>
             <TouchableOpacity 
-              onPress={() => this.OTPmodalOpen()}
+              onPress={() => this.OTPmodalOpen(false)}
               underlayColor={Color.gray}
               >
               <Text style={[styles.text, {
@@ -264,7 +273,27 @@ class Ledgers extends Component {
  
 onSuccess=()=>
 {
-  alert("success");
+  const parameter2={
+    amount:this.state.amount,
+    account_id:this.props.state.user.id,
+    account_code:this.props.state.user.code,
+    currency:this.state.type,
+    payment_payload:1,
+    payment_payload_value:1,
+    notes:"test",
+    stage:2,
+    charge:0,
+  }
+
+  this.setState({ isLoading: false })
+  Api.request(Routes.withdrawalCreate, parameter2, response => {
+    this.setState({ isLoading: false })
+  }, error => {
+    this.setState({ isLoading: false })
+    console.log({ error })
+  })
+
+  this.setState({isOtpModal:false})
 }
 
   render() {
@@ -285,7 +314,6 @@ onSuccess=()=>
             {balance.map((details)=>this.balanceRender(details))}
           </View>
         
-
           <ScrollView style={{paddingHorizontal:20,marginTop:15,height:190,backgroundColor:'#EDEDED'}} 
            onScroll={({nativeEvent}) => {
          if (isCloseToBottom(nativeEvent)) {
@@ -339,7 +367,10 @@ actionLabel={{
   error={''}
   blockedFlag={false}
   onSuccess={()=>this.onSuccess()}
+  onResend={()=>this.OTPmodalOpen(true)}
   onCancel={() => this.setState({isOtpModal: false,isLoading:false})}/>
+ 
+  
   
   {this.transferModalOpen()}
  

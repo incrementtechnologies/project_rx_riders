@@ -19,6 +19,8 @@ import Currency from 'services/Currency.js';
 import { Spinner } from 'components';
 import Api from 'services/api/index.js';
 import Config from 'src/config.js';
+import DeviceInfo from 'react-native-device-info';
+
 
 const width = Math.round(Dimensions.get('window').width);
 const height = Math.round(Dimensions.get('window').height);
@@ -67,12 +69,29 @@ class newDelivery extends Component {
       })
     }
   }
+  getBatteryInfo=()=>
+  {
+    DeviceInfo.getBatteryLevel().then(batteryLevel => {
+      console.log(batteryLevel)
+      return batteryLevel;
+    });
+  }
+
+  getChargingInfo=()=>
+  {
+    DeviceInfo.isBatteryCharging().then(isCharging => {
+      console.log(isCharging)
+      return isCharging;
+    });
+  }
 
   acceptDelivery() {
     const { delivery_details } = this.state;
     const { user } = this.props.state;
     const { navigate } = this.props.navigation;
     const { data } = this.props.navigation.state.params
+    const batteryLevel=this.getBatteryInfo();
+    const chargingInfo=this.getChargingInfo();
     if (user == null) {
       Alert.alert('You must login first')
       const proceedToLogin = NavigationActions.navigate({
@@ -82,6 +101,9 @@ class newDelivery extends Component {
       return
     }
 
+    console.log(batteryLevel);
+    console.log(chargingInfo);
+
     const parameter = {
       account_id: parseInt(delivery_details.account_id),
       checkout_id: parseInt(data.checkout_id),
@@ -90,6 +112,8 @@ class newDelivery extends Component {
     }
     this.setState({ isLoading: true })
     Api.request(Routes.deliveryCreate, parameter, response => {
+      if(batteryLevel>=0.50 || chargingInfo==true)
+      {
       if (response.data) {
         Alert.alert(
           "Successful",
@@ -109,6 +133,17 @@ class newDelivery extends Component {
           { cancelable: false }
         );
       }
+    }
+    else{
+      Alert.alert(
+        "Notice",
+        "Device Power too low, Please Charge Device to Accept Delivery Requests",
+        [
+          { text: "OK", onPress: () => navigate('Delivery') }
+        ],
+        { cancelable: false }
+      );
+    }
       this.setState({ isLoading: false })
     }, error => {
       console.log({ deliveryCreateError: error })
