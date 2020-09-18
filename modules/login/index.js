@@ -12,6 +12,7 @@ import {
   Alert
 } from 'react-native';
 import {NavigationActions} from 'react-navigation';
+import moment from 'moment';
 import Style from './Style.js';
 import { Spinner } from 'components';
 import CustomError from 'components/Modal/Error.js';
@@ -25,6 +26,8 @@ import SystemVersion from 'services/System.js';
 import { Player } from '@react-native-community/audio-toolkit';
 import OtpModal from 'components/Modal/Otp.js';
 import { Notifications } from 'react-native-notifications';
+
+const MAX_BACKGROUND_SESSION_IN_MINUTES = 60
 
 class Login extends Component {
   //Screen1 Component
@@ -43,6 +46,7 @@ class Login extends Component {
       notifications: [],
       appState: AppState.currentState
     };
+    this.bgTimestamp = null
     this.audio = null;
     this.registerNotificationEvents();
   }
@@ -73,6 +77,23 @@ class Login extends Component {
   }
 
   _handleAppStateChange = appState => {
+    const { user } = this.props.state
+    const { logout } = this.props
+
+    if (user) {
+      if (appState === 'background') {
+        this.bgTimestamp = new moment()
+      } else if (appState === 'active') {
+        const currentTime = new moment()
+        const diffInMinutes = currentTime.diff(this.bgTimestamp, 'minutes')
+
+        if (diffInMinutes >= MAX_BACKGROUND_SESSION_IN_MINUTES) {          
+          Alert.alert('Session Expired', 'Please log in your account')
+          logout()
+          this.props.navigation.navigate('loginStack');
+        }
+      }
+    }
     this.setState({ appState });
   };
 
@@ -275,7 +296,7 @@ class Login extends Component {
             column: 'id'
           }]
         }
-        console.log('parameter', parameter)
+
         Api.request(Routes.accountRetrieve, parameter, userInfo => {
           if(userInfo.data.length > 0){
             login(userInfo.data[0], this.state.token);

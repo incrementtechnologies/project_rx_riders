@@ -64,19 +64,24 @@ class MyDelivery extends Component {
       // temporary --- (false)
       if (response.data.length > 0) {
         if(active == 0){
-          this.setState({
-            data: response.data
-          }) 
+          if(this.state.data == null){
+            this.setState({
+              data: response.data
+            })
+            this.setState({
+              offset: page + 1
+            })  
+          }
         }else{
           let previousData = this.state.data
           previousData.push(...response.data)
           this.setState({
             data: previousData
           })
+          this.setState({
+            offset: page + 1
+          })
         }
-        this.setState({
-          offset: page + 1
-        })
         console.log('new offset', this.state.offset)
       } else {
         if(active > 0){
