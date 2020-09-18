@@ -17,12 +17,14 @@ import {ledgerData} from './ledger-data-test';
 import {Ledger} from 'components/Ledger'
 import Otp from 'components/Modal/Otp.js';
 import _ from 'lodash';
+import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
 
 const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
   const paddingToBottom = 0;
   return layoutMeasurement.height + contentOffset.y >=
     contentSize.height - paddingToBottom;
 };
+
 
 const width = Math.round(Dimensions.get('window').width);
 const height = Math.round(Dimensions.get('window').height);
@@ -39,9 +41,16 @@ class Ledgers extends Component {
       type:"PHP",
       limit:5,
       offset:0,
-      balance:[],
       history:[],
       location:0,
+      balance:[{
+        balance:0,
+        currency:'PHP',
+      },
+    {
+      balance:0,
+      currency:'USD',
+    }]
     } 
   }
 
@@ -51,8 +60,6 @@ class Ledgers extends Component {
     {
       this.retrieve({offset:this.state.offset})
     }
-  
-
   }
 
   retrieve = ({offset}) => {
@@ -72,8 +79,10 @@ class Ledgers extends Component {
       isLoading: true
     })
     Api.request(Routes.ledgerSummary, parameter, response => {
-     
-      this.setState({balance:response.data})
+      
+      const newBalance=_.uniqBy([...this.state.balance, ...response.data],"currency")
+      this.setState({balance:newBalance})
+      console.log(this.state.balance)
       this.setState({isLoading: false})
     },error => {
       console.log(error)
@@ -314,49 +323,55 @@ onSuccess=()=>
             {balance.map((details)=>this.balanceRender(details))}
           </View>
         
-          <ScrollView style={{paddingHorizontal:20,marginTop:15,height:190,backgroundColor:'#EDEDED'}} 
-           onScroll={({nativeEvent}) => {
-         if (isCloseToBottom(nativeEvent)) {
-       
-        this.retrieve({offset:this.state.offset+5})
-      }
-    }}
-    scrollEventThrottle={400}>
-      
-     
-        {this.state.history.map((details)=>(
-            <Ledger details={details} key={details.id}/>
-          ))}
-          {this.state.isLoading ? <Spinner mode="full" /> : null}
-          </ScrollView>
-
-          <View style={{justifyContent:'center',width:'100%',flexDirection:'row',backgroundColor:'white',height:90}}>
-      <TouchableOpacity
-              onPress={() => this.setState({transferModal:true})} 
-              style={{
-                position:'absolute',
-                justifyContent: 'center',
-                height: 50,
-                width: '60%',
-                borderRadius:10,
-                bottom:20,
-                backgroundColor:'#FF5B04',
-              
-                
-              }}
-              >
-                <View style={{flexDirection:'row',justifyContent:'center'}}>
-             
-              <Text style={{
-                color:'white',
-                alignSelf:'center',
-            
-              }}>Withdraw</Text>
-                  
-             </View>
-        </TouchableOpacity>
+          {
+              (this.state.balance[0].balance > 0 || this.state.balance[1].balance > 0) && ( 
+              <ScrollView style={{paddingHorizontal:20,marginTop:15,height:190,backgroundColor:'#EDEDED'}} 
+              onScroll={({nativeEvent}) => {
+            if (isCloseToBottom(nativeEvent)) {
+          
+           this.retrieve({offset:this.state.offset+5})
+         }
+       }}
+       scrollEventThrottle={400}>
+         
         
-        </View>
+           {this.state.history.map((details)=>(
+               <Ledger details={details} key={details.id}/>
+             ))}
+             {this.state.isLoading ? <Spinner mode="full" /> : null}
+             </ScrollView>)}
+        
+             {
+              (this.state.balance[0].balance > 0 || this.state.balance[1].balance > 0) && ( 
+                <View style={{justifyContent:'center',width:'100%',flexDirection:'row',backgroundColor:'white',height:90}}>
+                <TouchableOpacity
+                        onPress={() => this.setState({transferModal:true})} 
+                        style={{
+                          position:'absolute',
+                          justifyContent: 'center',
+                          height: 50,
+                          width: '60%',
+                          borderRadius:10,
+                          bottom:20,
+                          backgroundColor:'#FF5B04',
+                        
+                          
+                        }}
+                        >
+                          <View style={{flexDirection:'row',justifyContent:'center'}}>
+                       
+                        <Text style={{
+                          color:'white',
+                          alignSelf:'center',
+                      
+                        }}>Withdraw</Text>
+                            
+                       </View>
+                  </TouchableOpacity>
+                  
+                  </View>
+              )}
+
      
         <Otp visible={this.state.isOtpModal} 
 title={"OTP"}    

@@ -14,6 +14,7 @@ import * as Progress from 'react-native-progress';
 // import MapViewDirections from 'react-native-maps-directions';
 import CONFIG from 'src/config.js';
 import Api from 'services/api/index.js';
+import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
 
 const width = Math.round(Dimensions.get('window').width);
 const height = Math.round(Dimensions.get('window').height);
@@ -24,12 +25,12 @@ class Delivery extends Component {
     this.state = {
       viewerHeight: 50,
       region: {
-        latitude: 10.342326,
-        longitude: 123.8957059,
+        latitude: 123.885437,
+        longitude: 10.315699,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       },
-      data: null
+      data: {},
     } 
   }
 
@@ -40,8 +41,59 @@ class Delivery extends Component {
     //     latitude:info.coords.latitude,
     //     longitude:info.coords.longitude
     //   }});
-    //  })
+
+    //  }
     this.retrieve()
+    BackgroundGeolocation.configure({
+      desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
+      stationaryRadius: 50,
+      distanceFilter: 50,
+      notificationTitle: 'Background tracking',
+      notificationText: 'enabled',
+      startOnBoot: false,
+      debug:false,
+      stopOnTerminate: true,
+      locationProvider: BackgroundGeolocation.ACTIVITY_PROVIDER,
+      interval: 120000,
+      fastestInterval: 50000,
+      activitiesInterval: 100000,
+      stopOnStillActivity: false,
+      url: 'http://192.168.81.15:3000/location',
+    
+    });
+
+    BackgroundGeolocation.start(); //triggers start on start event
+
+
+    BackgroundGeolocation.on('location', (location) => {
+      this.setState({region:{
+        ...this.state.region,
+        latitude:location.latitude,
+        longitude:location.longitude,
+      }})
+      console.log(location)
+      const parameter = {
+        checkout_id: this.state.data.id,
+        sender:"rider",
+        longitude:location.longitude,
+        latitude:location.latitude,
+      }
+      console.log(parameter)
+      BackgroundGeolocation.startTask(taskKey => {
+        Api.request(Routes.locationSharing, parameter, response => {
+          console.log("testing22",response)
+        })
+        BackgroundGeolocation.endTask(taskKey);
+      });
+    });
+    
+  
+    
+  }
+
+  componentWillUnmount=()=>
+  {
+    BackgroundGeolocation.removeAllListeners()
   }
 
   retrieve(){
@@ -87,7 +139,7 @@ class Delivery extends Component {
         "Error Message",
         "Incomplete data, unable to update!",
         [
-          { text: "OK", onPress: () => {}}
+          { text: "OK", onPress: () => {BackgroundGeolocation.removeAllListeners()}}
         ],
         { cancelable: true }
       );
@@ -329,7 +381,8 @@ class Delivery extends Component {
                   borderRadius: 5,
                   marginBottom: 10
                 }}
-                onPress={() => this.completeOrder()}
+                // onPress={() => this.completeOrder()}
+                onPress={()=>this.completeOrder()}
                 underlayColor={Color.primary}
                 >
                 <Text style={{
@@ -430,8 +483,9 @@ class Delivery extends Component {
             style={Style.map}
             ref={(ref)=>this.mapView=ref}
             provider={PROVIDER_GOOGLE}
+            showsUserLocation={true}
+            followsUserLocation={true}
             region={this.state.region}
-            onRegionChangeComplete={(e)=>this.onRegionChange(e)}
             //onPress={()=>this.animate()}
             >
             {
