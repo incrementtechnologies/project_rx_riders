@@ -42,4 +42,6 @@ export default {
   ledgerSummary: apiUrl+ 'ledger/summary',
   checkoutUpdate: apiUrl + 'checkouts/update',
   ledgerHistory:apiUrl + 'ledger/history',
+  filters:apiUrl + 'dashboard/categories',
+  locationSharing:apiUrl + 'broadcasts/location_sharing',
 }
