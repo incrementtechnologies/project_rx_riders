@@ -361,7 +361,7 @@ class Login extends Component {
           const token = response.token;
           Api.getAuthUser(response.token, (response) => {
             // check if user if RIDER
-            if (response.account_type !== 'RIDER') {
+            if (response.account_type !== 'RIDER' && response.account_type !== 'ADMIN') {
               this.setState({
                 isResponseError: true,
                 responseErrorMessage: 'Please verify your account first. Contact RunwayExpress.support'

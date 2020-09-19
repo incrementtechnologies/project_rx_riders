@@ -25,7 +25,7 @@ export default {
     }
   },
   {
-    title: 'Ledger',
+    title: 'Wallet',
     route: 'Ledger',
     icon: faCreditCard,
     iconStyle: {

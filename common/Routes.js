@@ -40,8 +40,8 @@ export default {
   //Checkout
   checkoutRetrieveByRider: apiUrl + 'checkouts/retrieve_by_rider',
   ledgerSummary: apiUrl+ 'ledger/summary',
+  ledgerHistory: apiUrl + 'ledger/history',
   checkoutUpdate: apiUrl + 'checkouts/update',
-  ledgerHistory:apiUrl + 'ledger/history',
   filters:apiUrl + 'dashboard/categories',
   locationSharing:apiUrl + 'broadcasts/location_sharing',
 }

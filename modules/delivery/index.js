@@ -74,9 +74,9 @@ class Delivery extends Component {
       console.log(location)
       const parameter = {
         checkout_id: this.state.data.id,
-        sender:"rider",
-        longitude:location.longitude,
-        latitude:location.latitude,
+        sender: "rider",
+        longitude: location.longitude,
+        latitude: location.latitude,
       }
       console.log(parameter)
       BackgroundGeolocation.startTask(taskKey => {

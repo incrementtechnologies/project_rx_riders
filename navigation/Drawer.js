@@ -89,7 +89,7 @@ const StackNavigator = createStackNavigator({
   Ledger: {
     screen: Ledger,
     navigationOptions: ({ navigation }) => ({
-      title: 'Ledger',
+      title: 'My Wallet',
       headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
       headerRight: <OptionRight navigationProps={navigation} />,
       headerStyle: {
@@ -215,7 +215,7 @@ const Drawer = createDrawerNavigator({
   Ledger: {
     screen: StackNavigator,
     navigationOptions: {
-      drawerLabel: 'Ledger',
+      drawerLabel: 'Wallet',
     },
   },
   HelpCenter: {
