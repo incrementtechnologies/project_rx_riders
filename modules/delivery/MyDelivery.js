@@ -120,6 +120,14 @@ class MyDelivery extends Component {
         {isLoading ? <Spinner mode="overlay" style={{
           zIndex: 100
         }}/> : null }
+
+        <View>
+          <Text style={{
+            textAlign: 'center',
+            paddingTop: 10
+          }}>Scroll down to load more</Text>
+        </View>
+
         {data == null && (<Empty refresh={true} onRefresh={() => this.retrieve()}/>)}
         <View style={[Style.MainContainer, {
           minHeight: height
