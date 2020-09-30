@@ -19,6 +19,7 @@ import MyAddress from 'modules/myAddresses';
 import Settings from 'modules/settings';
 import Referral from 'modules/referral';
 import NewDelivery from 'modules/newDelivery';
+import Deposit from 'modules/deposit';
 import { connect } from 'react-redux';
 import Ledger from 'modules/Ledger';
 
@@ -197,6 +198,18 @@ const StackNavigator = createStackNavigator({
       headerTintColor: '#fff',
     }),
   },
+  Deposit: {
+    screen: Deposit,
+    navigationOptions: ({ navigation }) => ({
+      title: 'My Deposits',
+      headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
+      headerRight: <OptionRight navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: Color.white,
+      },
+      headerTintColor: Color.primary,
+    }),
+  },
 });
 
 const Drawer = createDrawerNavigator({
@@ -252,6 +265,12 @@ const Drawer = createDrawerNavigator({
     screen: StackNavigator,
     navigationOptions: {
       drawerLabel: '',
+    },
+  },
+  Deposit: {
+    screen: StackNavigator,
+    navigationOptions: {
+      drawerLabel: 'My Deposits',
     },
   },
 }, {
