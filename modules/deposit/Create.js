@@ -86,6 +86,55 @@ class CreateStack extends Component {
     });
   }
 
+  submit(){
+    const { amount, currency, payload, payload_value, notes, added, files} = this.state;
+    if(amount < 1000){
+      ToastAndroid.show('Minimum amount is ' + currency +' 1000', ToastAndroid.LONG);
+    }
+    if(payload == null){
+      ToastAndroid.show('Payment Center is required', ToastAndroid.LONG);
+    }
+    if(files.length == 0){
+      ToastAndroid.show('Deposit Receipt is required', ToastAndroid.LONG);
+    }
+    if(added.length == 0){
+      ToastAndroid.show('Deliveries is required', ToastAndroid.LONG);
+    }
+    const { user } = this.props.state;
+    if(user == null){
+      ToastAndroid.show('Invalid user.', ToastAndroid.LONG);
+      return
+    }
+    let parameter = {
+      account_id: user.id,
+      account_code: user.code,
+      currency: currency,
+      amount: amount,
+      payload: payload,
+      payload_value: JSON.stringify(payload_value),
+      notes: notes,
+      tags: JSON.stringify(added),
+      files: JSON.stringify(files)
+    }
+    console.log('parameter', parameter)
+    Api.request(Routes.depositCreate, parameter, response => {
+      console.log(response)
+      const navigateAction = NavigationActions.navigate({
+        routeName: 'drawerStack',
+        action: StackActions.reset({
+          index: 0,
+          key: null,
+          actions: [
+              NavigationActions.navigate({routeName: 'Deposit'}),
+          ]
+        })
+      });
+      this.props.navigation.dispatch(navigateAction);
+    }, error => {
+      console.log('error', error)
+    });
+  }
+
   addImageToFiles(url){
     let files = [...this.state.files, url]
     this.setState({
@@ -117,7 +166,7 @@ class CreateStack extends Component {
     if(selected == null) return
 
     if(added.indexOf(selected.id) > -1){
-      ToastAndroid.show('Order Number' + selected.checkout.order_number + ' already exist!', ToastAndroid.SHORT);
+      ToastAndroid.show('Order Number' + selected.checkout.order_number + ' already exist!', ToastAndroid.LONG);
       return
     }
 
@@ -467,9 +516,7 @@ class CreateStack extends Component {
                 bottom: 5
               }}
               onPress={() => {
-                this.setState({
-                  imageModal: true
-                })
+                this.submit()
               }}
               underlayColor={Color.primary}
               >

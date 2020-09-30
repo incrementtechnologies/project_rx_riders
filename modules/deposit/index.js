@@ -20,6 +20,7 @@ import { Spinner } from 'components';
 import Api from 'services/api/index.js';
 import Config from 'src/config.js';
 import DeviceInfo from 'react-native-device-info';
+import DoubleLineOneOption from 'components/Swipeable/DoubleLineOneOption.js';
 
 
 const width = Math.round(Dimensions.get('window').width);
@@ -60,7 +61,8 @@ class Deposit extends Component {
     })
     Api.request(Routes.depositRetrieve, parameter, response => {
       this.setState({
-        isLoading: false
+        isLoading: false,
+        data: response.data
       })
     }, error => {
       this.setState({
@@ -96,8 +98,16 @@ class Deposit extends Component {
           )}
           {
             data && (
-              <View>
-              </View>
+              <DoubleLineOneOption
+                data={data}
+                onAdd={(item) => {
+                  this.onAddAlert(item)
+                }}
+                onDelete={(item) => {
+                  this.onDeleteAlert(item)
+                }}
+                added={[]}
+              />
             )
           }
 
