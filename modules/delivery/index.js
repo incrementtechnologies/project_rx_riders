@@ -3,7 +3,7 @@ import {View, Image, TouchableHighlight, Text, ScrollView, FlatList, Dimensions,
 import { NavigationActions } from 'react-navigation';
 import { Thumbnail, List, ListItem, Separator } from 'native-base';
 import { connect } from 'react-redux';
-import { faMapMarker, faPhoneAlt } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarker, faPhoneAlt,faStar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import Style from './Style.js';
 import MapView, { PROVIDER_GOOGLE, Marker,Callout } from 'react-native-maps';
@@ -194,11 +194,17 @@ class Delivery extends Component {
     );
   }
 
+  submitRatings(type){
+    //
+  }
+
   viewMore = () => {
     this.setState({
       viewerHeight: this.state.viewerHeight != 70 ? 70 : '50%'
     })
   }
+
+
 
   onRegionChange=(regionUpdate)=> {
     console.log('test',regionUpdate);
@@ -356,8 +362,62 @@ class Delivery extends Component {
           {
             order.status === 'completed' && (
               <View style={[Style.borderTop, {
-                flexDirection: 'row'
               }]}>
+
+                <View style={{
+                  flexDirection: 'row',
+                  paddingTop: 10,
+                  paddingBottom: 10
+                }}>
+                  <TouchableOpacity style={{
+                    width: '45%',
+                    paddingLeft: 10,
+                    paddingRight: 10,
+                    backgroundColor: Color.primary,
+                    height: 50,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: 5,
+                    marginBottom: 10,
+                    marginRight: '5%'
+                  }}
+                  onPress={()=>this.submitRatings('merchant')}
+                  underlayColor={Color.primary}
+                    >
+                    <Text style={{
+                      width: '50%',
+                      textAlign: 'center',
+                      color: Color.white
+                    }}>
+                      Rate Merchant
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={{
+                      width: '45%',
+                      paddingLeft: 10,
+                      paddingRight: 10,
+                      backgroundColor: Color.secondary,
+                      height: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      borderRadius: 5,
+                      marginBottom: 10,
+                      marginLeft: '5%'
+                    }}
+                    onPress={()=>this.submitRatings('rider')}
+                    underlayColor={Color.primary}
+                    >
+                    <Text style={{
+                      width: '50%',
+                      textAlign: 'center',
+                      color: Color.white
+                    }}>
+                      Rate Customer
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
                 <Text style={[BasicStyles.normalFontSize, {
                   width: '100%',
                   textAlign: 'center',
