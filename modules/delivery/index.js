@@ -15,6 +15,7 @@ import * as Progress from 'react-native-progress';
 import CONFIG from 'src/config.js';
 import Api from 'services/api/index.js';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
+import CreateRatings from 'components/Rating/StandardRatings.js';
 
 const width = Math.round(Dimensions.get('window').width);
 const height = Math.round(Dimensions.get('window').height);
@@ -31,6 +32,8 @@ class Delivery extends Component {
         longitudeDelta: 0.0421,
       },
       data: {},
+      ratingModal: false,
+      ratingData: null
     } 
   }
 
@@ -195,7 +198,21 @@ class Delivery extends Component {
   }
 
   submitRatings(type){
-    //
+    const { order } = this.props.state;
+    if(order == null){
+      return
+    }
+    console.log('order', order)
+    let data = {
+      payload: type,
+      payload_value: order.rider,
+      payload1: 'checkout',
+      payload_value1: order.checkout_id
+    }
+    this.setState({
+      ratingModal: true,
+      ratingData: data
+    })
   }
 
   viewMore = () => {
@@ -533,7 +550,7 @@ class Delivery extends Component {
     );
   }
   render() {
-    const { data } = this.state;
+    const { data, ratingData, ratingModal } = this.state;
     return (
       <View style={Style.MainContainer}>
         <View style={{
@@ -615,6 +632,24 @@ class Delivery extends Component {
             (data !== null && this.state.viewerHeight !== 50) && this._viewMore()
           }
           </View>
+          {
+            ratingModal && (
+              <CreateRatings data={ratingData} 
+              visible={ratingModal}
+              action={(flag) => {
+                this.setState({
+                  ratingModal: flag,
+                  ratingData: null
+                })
+              }}
+              title={'RATE ' + ratingData.payload.toUpperCase()}
+              actionLabel={{
+                no: 'Cancel',
+                yes: 'Submit'
+              }}
+              />
+            )
+          }
         </View>
       </View>
     );

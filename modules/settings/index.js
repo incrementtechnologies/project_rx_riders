@@ -57,7 +57,6 @@ class Settings extends Component{
     Color.setPrimary(theme.primary)
     Color.setSecondary(theme.secondary)
     Color.setTertiary(theme.tertiary)
-    this.redirect()
     const { setTheme } = this.props;
     setTheme(theme)
   }

@@ -121,6 +121,7 @@ const reducer = (state = initialState, action) => {
         notifications: updatedNotifications
       }
     case types.SET_THEME:
+      console.log('theme', theme);
       storeData('primary', theme.primary);
       storeData('secondary', theme.secondary);
       storeData('tertiary', theme.tertiary);

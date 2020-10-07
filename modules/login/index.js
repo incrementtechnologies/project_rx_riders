@@ -53,7 +53,7 @@ class Login extends Component {
 
   async componentDidMount(){
     AppState.addEventListener('change', this._handleAppStateChange);
-
+    this.getTheme()
     if(config.versionChecker == 'store'){
       this.setState({isLoading: true})
       SystemVersion.checkVersion(response => {
@@ -71,6 +71,26 @@ class Login extends Component {
       this.setState({notifications: [initialNotification, ...this.state.notifications]});
     }
   }
+
+   getTheme = async () => {
+    try {
+      const primary = await AsyncStorage.getItem(Helper.APP_NAME + 'primary');
+      const secondary = await AsyncStorage.getItem(Helper.APP_NAME + 'secondary');
+      const tertiary = await AsyncStorage.getItem(Helper.APP_NAME + 'tertiary');
+      console.log('primary', primary)
+      if(primary != null && secondary != null && tertiary != null) {
+        const { setTheme } = this.props;
+        setTheme({
+          primary: primary,
+          secondary: secondary,
+          tertiary: tertiary
+        })
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
@@ -533,6 +553,7 @@ const mapDispatchToProps = dispatch => {
   return {
     login: (user, token) => dispatch(actions.login(user, token)),
     logout: () => dispatch(actions.logout()),
+    setTheme: (theme) => dispatch(actions.setTheme(theme)),
     setNotifications: (unread, notifications) => dispatch(actions.setNotifications(unread, notifications)),
     updateNotifications: (unread, notification) => dispatch(actions.updateNotifications(unread, notification)),
     updateMessagesOnGroup: (message) => dispatch(actions.updateMessagesOnGroup(message)),
