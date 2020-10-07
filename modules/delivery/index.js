@@ -100,8 +100,9 @@ class Delivery extends Component {
   }
 
   retrieve(){
-    const { order } = this.props.state;
-    if(order == null){
+    const { order, user } = this.props.state;
+
+    if(order == null || user == null){
       this.props.navigation.navigate('drawerStack');
       return
     }
@@ -110,7 +111,8 @@ class Delivery extends Component {
         value: order.checkout_id,
         column: 'id',
         clause: '='
-      }]
+      }],
+      rider: user.id
     }
     Api.request(Routes.checkoutRetrieveByRider, parameter, response => {
       console.log(response.data[0])
@@ -205,7 +207,7 @@ class Delivery extends Component {
     console.log('order', order)
     let data = {
       payload: type,
-      payload_value: order.rider,
+      payload_value: type == 'merchant' ? order.merchant_id : order.account_id,
       payload1: 'checkout',
       payload_value1: order.checkout_id
     }
@@ -381,59 +383,73 @@ class Delivery extends Component {
               <View style={[Style.borderTop, {
               }]}>
 
-                <View style={{
-                  flexDirection: 'row',
-                  paddingTop: 10,
-                  paddingBottom: 10
-                }}>
-                  <TouchableOpacity style={{
-                    width: '45%',
-                    paddingLeft: 10,
-                    paddingRight: 10,
-                    backgroundColor: Color.primary,
-                    height: 50,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: 5,
-                    marginBottom: 10,
-                    marginRight: '5%'
-                  }}
-                  onPress={()=>this.submitRatings('merchant')}
-                  underlayColor={Color.primary}
-                    >
-                    <Text style={{
-                      width: '50%',
-                      textAlign: 'center',
-                      color: Color.white
-                    }}>
-                      Rate Merchant
-                    </Text>
-                  </TouchableOpacity>
+              {
+                (data.merchant_rating == null || data.customer_rating == null) && (
 
-                  <TouchableOpacity style={{
-                      width: '45%',
-                      paddingLeft: 10,
-                      paddingRight: 10,
-                      backgroundColor: Color.secondary,
-                      height: 50,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      borderRadius: 5,
-                      marginBottom: 10,
-                      marginLeft: '5%'
-                    }}
-                    onPress={()=>this.submitRatings('rider')}
-                    underlayColor={Color.primary}
-                    >
-                    <Text style={{
-                      width: '50%',
-                      textAlign: 'center',
-                      color: Color.white
-                    }}>
-                      Rate Customer
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                  <View style={{
+                    flexDirection: 'row',
+                    paddingTop: 10,
+                    paddingBottom: 10
+                  }}>
+                    {
+                      data.merchant_rating == null && (
+                        <TouchableOpacity style={{
+                          width: '45%',
+                          paddingLeft: 10,
+                          paddingRight: 10,
+                          backgroundColor: Color.primary,
+                          height: 50,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          borderRadius: 5,
+                          marginBottom: 10,
+                          marginRight: '5%'
+                        }}
+                        onPress={()=>this.submitRatings('merchant')}
+                        underlayColor={Color.primary}
+                          >
+                          <Text style={{
+                            width: '50%',
+                            textAlign: 'center',
+                            color: Color.white
+                          }}>
+                            Rate Merchant
+                          </Text>
+                        </TouchableOpacity>
+                      )
+                    }
+                    {
+                      data.customer_rating == null && (
+                        <TouchableOpacity style={{
+                            width: '45%',
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            backgroundColor: Color.secondary,
+                            height: 50,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderRadius: 5,
+                            marginBottom: 10,
+                            marginLeft: '5%'
+                          }}
+                          onPress={()=>this.submitRatings('customer')}
+                          underlayColor={Color.primary}
+                          >
+                          <Text style={{
+                            width: '50%',
+                            textAlign: 'center',
+                            color: Color.white
+                          }}>
+                            Rate Customer
+                          </Text>
+                        </TouchableOpacity>
+
+                      )
+                    }
+                  </View>
+                )
+              }
+                
 
                 <Text style={[BasicStyles.normalFontSize, {
                   width: '100%',
@@ -641,6 +657,7 @@ class Delivery extends Component {
                   ratingModal: flag,
                   ratingData: null
                 })
+                this.retrieve()
               }}
               title={'RATE ' + ratingData.payload.toUpperCase()}
               actionLabel={{

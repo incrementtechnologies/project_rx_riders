@@ -71,6 +71,10 @@ class Deposit extends Component {
     })
   }
 
+  redirect(item){
+
+  }
+
   createDeposit = () => {
     this.props.navigation.navigate('createDepositStack')
   }
@@ -100,11 +104,8 @@ class Deposit extends Component {
             data && (
               <DoubleLineOneOption
                 data={data}
-                onAdd={(item) => {
-                  this.onAddAlert(item)
-                }}
-                onDelete={(item) => {
-                  this.onDeleteAlert(item)
+                redirect={(item) => {
+                  this.redirect(item)
                 }}
                 added={[]}
               />
