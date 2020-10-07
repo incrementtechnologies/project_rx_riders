@@ -633,7 +633,7 @@ class Delivery extends Component {
           }
           </View>
           {
-            ratingModal && (
+            (ratingModal && ratingData) && (
               <CreateRatings data={ratingData} 
               visible={ratingModal}
               action={(flag) => {

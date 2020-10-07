@@ -46,5 +46,8 @@ export default {
   locationSharing:apiUrl + 'broadcasts/location_sharing',
   //Deposits
   depositCreate: apiUrl + 'deposits/create',
-  depositRetrieve: apiUrl + 'deposits/retrieve'
+  depositRetrieve: apiUrl + 'deposits/retrieve',
+  // ratings
+  ratingsCreate: apiUrl + 'ratings/create',
+  ratingsRetrieve: apiUrl + 'ratings/retrieve'
 }
