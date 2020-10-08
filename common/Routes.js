@@ -48,10 +48,13 @@ export default {
   depositCreate: apiUrl + 'deposits/create',
   depositRetrieve: apiUrl + 'deposits/retrieve',
   // messenger
-  messengerCreateForRider: apiUrl + 'custom_messenger_groups/create_for_rider',
+  messengerCreateForRider: apiUrl + 'custom_messenger_groups/custom_create',
   messengerGroupRetrieve: apiUrl + 'messenger_groups/retrieve',
   messengerGroupRetrieveByParams: apiUrl + 'messenger_groups/retrieve_by_params',
   messengerMessagesCreate: apiUrl + 'messenger_messages/create',
   messengerMessagesRetrieve: apiUrl + 'messenger_messages/retrieve',
   messengerMessagesUpdate: apiUrl + 'messenger_messages/update_by_status',
+  // ratings
+  ratingsCreate: apiUrl + 'ratings/create',
+  ratingsRetrieve: apiUrl + 'ratings/retrieve'
 }

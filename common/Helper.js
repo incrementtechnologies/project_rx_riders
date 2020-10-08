@@ -80,7 +80,9 @@ export default {
     channel: 'runway',
     notifications: 'App\\Events\\Notifications',
     rider: 'App\\Events\\Rider',
-    typing: 'typing'
+    typing: 'typing',
+    messages: 'App\\Events\\Message',
+    messageGroup: 'App\\Events\\MessageGroup',
   },
   tutorials: [
     {

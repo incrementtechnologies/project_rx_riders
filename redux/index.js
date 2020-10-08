@@ -11,6 +11,13 @@ const types = {
   SET_THEME: 'SET_THEME',
   SET_ORDER: 'SET_ORDER',
   nav: null,
+  SET_MESSAGES: 'SET_MESSAGES',
+  SET_MESSENGER_GROUP: 'SET_MESSENGER_GROUP',
+  UPDATE_MESSENGER_GROUP: 'UPDATE_MESSENGER_GROUP',
+  SET_MESSAGES_ON_GROUP: 'SET_MESSAGES_ON_GROUP',
+  UPDATE_MESSAGES_ON_GROUP: 'UPDATE_MESSAGES_ON_GROUP',
+  UPDATE_MESSAGE_BY_CODE: 'UPDATE_MESSAGE_BY_CODE',
+  UPDATE_MESSAGES_ON_GROUP_BY_PAYLOAD: 'UPDATE_MESSAGES_ON_GROUP_BY_PAYLOAD',
 }
 
 export const actions = {
@@ -154,6 +161,7 @@ const reducer = (state = initialState, action) => {
         notifications: updatedNotifications
       }
     case types.SET_THEME:
+      console.log('theme', theme);
       storeData('primary', theme.primary);
       storeData('secondary', theme.secondary);
       storeData('tertiary', theme.tertiary);
