@@ -127,6 +127,8 @@ class Delivery extends Component {
       }else{
         this.props.navigation.navigate('drawerStack');
       }
+    }, error => {
+      console.log('error', error)
     })
   }
 
@@ -498,6 +500,7 @@ class Delivery extends Component {
                     longitudeDelta: 0.0421,
                   }}
                   draggable
+                  pinColor={'#00FF00'}
                   onDragEnd={(e) => {
                     // this.manageOnDragEnd(e)
                   }}
@@ -517,6 +520,7 @@ class Delivery extends Component {
                     longitudeDelta: 0.0421,
                   }}
                   draggable
+                  pinColor={Color.primary}
                   onDragEnd={(e) => {
                     // this.manageOnDragEnd(e)
                   }}

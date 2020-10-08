@@ -44,4 +44,5 @@ export default {
   ledgerHistory:apiUrl + 'ledger/history',
   filters:apiUrl + 'dashboard/categories',
   locationSharing:apiUrl + 'broadcasts/location_sharing',
+  distanceRetrieve:apiUrl + 'locations/get_distance',
 }
