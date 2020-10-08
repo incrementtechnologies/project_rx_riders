@@ -11,6 +11,7 @@ import CartStack from 'modules/productCheckout/Drawer.js';
 import addressMapStack from 'modules/addressMap/Drawer.js';
 import paymentOptionStack from 'modules/paymentOptions/Drawer.js'
 import MapStack from 'modules/delivery/Drawer.js';
+import CreateDepositStack from 'modules/deposit/Create.js';
 
 
 // login stack
@@ -55,6 +56,7 @@ const PrimaryNav = createStackNavigator({
   addressMap:{screen:addressMapStack},
   paymentOptions:{screen:paymentOptionStack},
   mapStack: { screen: MapStack},
+  createDepositStack: { screen: CreateDepositStack}
 }, {
   // Default config for all screens
   headerMode: 'none',

@@ -60,7 +60,6 @@ class newDelivery extends Component {
           value: data.checkout_id
         }]
       }, response => {
-        console.log({ response })
         if (response.data.length) {
           this.setState({ delivery_details: response.data[0], isLoading: false })
         }
@@ -69,29 +68,21 @@ class newDelivery extends Component {
       })
     }
   }
-  getBatteryInfo=()=>
-  {
-    DeviceInfo.getBatteryLevel().then(batteryLevel => {
-      console.log(batteryLevel)
+
+  getBatteryInfo = async () => {
+    const batteryLevel = await DeviceInfo.getBatteryLevel().then(batteryLevel => {
       return batteryLevel;
     });
+    return batteryLevel
   }
 
-  getChargingInfo=()=>
-  {
-    DeviceInfo.isBatteryCharging().then(isCharging => {
-      console.log(isCharging)
-      return isCharging;
-    });
-  }
-
-  acceptDelivery() {
+  async acceptDelivery() {
     const { delivery_details } = this.state;
     const { user } = this.props.state;
     const { navigate } = this.props.navigation;
     const { data } = this.props.navigation.state.params
-    const batteryLevel=this.getBatteryInfo();
-    const chargingInfo=this.getChargingInfo();
+    const batteryLevel = await this.getBatteryInfo();
+
     if (user == null) {
       Alert.alert('You must login first')
       const proceedToLogin = NavigationActions.navigate({
@@ -101,52 +92,52 @@ class newDelivery extends Component {
       return
     }
 
-    console.log(batteryLevel);
-    console.log(chargingInfo);
+    if (batteryLevel < 0.50) {
+      Alert.alert(
+        "Battery Low",
+        "You must have at least 50% battery to accept delivery requests"
+      )
+      return
+    }
 
     const parameter = {
       account_id: parseInt(delivery_details.account_id),
       checkout_id: parseInt(data.checkout_id),
       merchant_id: parseInt(delivery_details.merchant_id),
       rider: parseInt(user.id),
+      delivery_fee: parseFloat(delivery_details.shipping_fee),
+      total: parseFloat(delivery_details.total),
+      currency: delivery_details.currency
     }
+
     this.setState({ isLoading: true })
     Api.request(Routes.deliveryCreate, parameter, response => {
-      if(batteryLevel>=0.50 || chargingInfo==true)
-      {
-      if (response.data) {
-        Alert.alert(
-          "Successful",
-          "Delivery entry is already added to your list",
-          [
-            { text: "OK", onPress: () => navigate('Delivery') }
-          ],
-          { cancelable: false }
-        );
+      if (Array.isArray(response.error) === false && typeof (response.error) !== "string") {
+        Alert.alert('An error occured in accepting delivery request. Please try again')
+        this.setState({ isLoading: false })
       } else {
-        Alert.alert(
-          "Notice",
-          "Sorry, this entry is already been taken",
-          [
-            { text: "OK", onPress: () => navigate('Delivery') }
-          ],
-          { cancelable: false }
-        );
+        if (response.data) {
+          Alert.alert(
+            "Successful",
+            "Delivery request is added to your list",
+            [
+              { text: "OK", onPress: () => navigate('Delivery') }
+            ],
+            { cancelable: false }
+          );
+        } else {
+          Alert.alert(
+            "Notice",
+            "Sorry, this request has already been taken",
+            [
+              { text: "OK", onPress: () => navigate('Delivery') }
+            ],
+            { cancelable: false }
+          );
+        }
+        this.setState({ isLoading: false })
       }
-    }
-    else{
-      Alert.alert(
-        "Notice",
-        "Device Power too low, Please Charge Device to Accept Delivery Requests",
-        [
-          { text: "OK", onPress: () => navigate('Delivery') }
-        ],
-        { cancelable: false }
-      );
-    }
-      this.setState({ isLoading: false })
-    }, error => {
-      console.log({ deliveryCreateError: error })
+    }, () => {
       Alert.alert('An error occured. Please try again')
       this.setState({ isLoading: false })
     })

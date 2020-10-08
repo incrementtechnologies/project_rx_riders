@@ -40,9 +40,15 @@ export default {
   //Checkout
   checkoutRetrieveByRider: apiUrl + 'checkouts/retrieve_by_rider',
   ledgerSummary: apiUrl+ 'ledger/summary',
+  ledgerHistory: apiUrl + 'ledger/history',
   checkoutUpdate: apiUrl + 'checkouts/update',
-  ledgerHistory:apiUrl + 'ledger/history',
   filters:apiUrl + 'dashboard/categories',
   locationSharing:apiUrl + 'broadcasts/location_sharing',
   distanceRetrieve:apiUrl + 'locations/get_distance',
+  //Deposits
+  depositCreate: apiUrl + 'deposits/create',
+  depositRetrieve: apiUrl + 'deposits/retrieve',
+  // ratings
+  ratingsCreate: apiUrl + 'ratings/create',
+  ratingsRetrieve: apiUrl + 'ratings/retrieve'
 }

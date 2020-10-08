@@ -25,8 +25,16 @@ export default {
     }
   },
   {
-    title: 'Ledger',
+    title: 'Wallet',
     route: 'Ledger',
+    icon: faCreditCard,
+    iconStyle: {
+      color: Color.primary
+    }
+  },
+  {
+    title: 'My Deposit',
+    route: 'Deposit',
     icon: faCreditCard,
     iconStyle: {
       color: Color.primary
@@ -102,6 +110,16 @@ export default {
       type:'Beverages',
     }
   ],
+  paymentCenters: [{
+    title: 'BDO',
+    value: 'bdo',
+    account_name: 'RunwayExpress Mobile Application',
+    account_number: '123-123-123-123'
+  }],
+  currency: [{
+    title: 'PHP',
+    value: 'php'
+  }],
   retrieveDataFlag: 1,
   validateEmail(email){
     let reg = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+.[a-zA-Z0-9]*$/

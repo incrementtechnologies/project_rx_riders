@@ -36,21 +36,14 @@ class Ledgers extends Component {
       data: null,
       isLoading: false,
       selected: null,
-      isOtpModal:false,
-      transferModal:false,
-      type:"PHP",
-      limit:5,
-      offset:0,
-      history:[],
-      location:0,
-      balance:[{
-        balance:0,
-        currency:'PHP',
-      },
-    {
-      balance:0,
-      currency:'USD',
-    }]
+      isOtpModal: false,
+      transferModal: false,
+      type: "PHP",
+      limit: 5,
+      offset: 0,
+      location: 0,
+      history: [],
+      balance: []
     } 
   }
 
@@ -64,180 +57,258 @@ class Ledgers extends Component {
 
   retrieve = ({offset}) => {
     const { user } = this.props.state;
+    if(user == null){
+      return
+    }
   
-    const parameter = {
-      account_id:user.id,
-      account_code:user.code
+    const summaryParameter = {
+      account_id: user.id,
+      account_code: user.code
     }
-    const parameter2 = {
-      account_id:user.id,
-      account_code:user.code,
-      limit:this.state.limit,
-      offset:offset,
-    }
+    
     this.setState({
       isLoading: true
     })
-    Api.request(Routes.ledgerSummary, parameter, response => {
-      
-      const newBalance=_.uniqBy([...this.state.balance, ...response.data],"currency")
-      this.setState({balance:newBalance})
-      console.log(this.state.balance)
+
+    Api.request(Routes.ledgerSummary, summaryParameter, response => {
+      console.log('ledgerSummary', response)
+      this.setState({
+        balance: response.data.length > 0 ? response.data : [{
+          currency: 'PHP',
+          balance: 0
+        }]
+      })
       this.setState({isLoading: false})
     },error => {
+      this.setState({isLoading: false})
       console.log(error)
     });
 
-    Api.request(Routes.ledgerHistory, parameter2, response => {
+    const historyParameter = {
+      account_id: user.id,
+      account_code: user.code,
+      limit: this.state.limit,
+      offset: offset,
+    }
+
+    Api.request(Routes.ledgerHistory, historyParameter, response => {
       if (response.data.length > 0) {
-        
-        const joined = _.uniqBy([...this.state.history, ...response.data],'code')
-        console.log(joined)
         this.setState({
           isLoading: false,
-          history: joined,
+          history: response.data,
         })        
       }
-
-
-
-
-
-
     },error => {
+      this.setState({isLoading: false})
       console.log(error)
     });
   }
 
-  balanceRender=(details)=>
-  {
+
+  onSuccess = () => {
+    const parameter2 = {
+      amount:this.state.amount,
+      account_id:this.props.state.user.id,
+      account_code:this.props.state.user.code,
+      currency:this.state.type,
+      payment_payload:1,
+      payment_payload_value:1,
+      notes:"test",
+      stage:2,
+      charge:0,
+    }
+
+    this.setState({ isLoading: false })
+    Api.request(Routes.withdrawalCreate, parameter2, response => {
+      this.setState({ isLoading: false })
+    }, error => {
+      this.setState({ isLoading: false })
+      console.log({ error })
+    })
+    this.setState({isOtpModal:false})
+  }
+
+  OTPmodalOpen = (resend) => {
+    this.setState({ isLoading: true })
+    const parameter = {
+      amount: this.state.amount,
+      account_id: this.props.state.user.id,
+      account_code: this.props.state.user.code,
+      currency: this.state.type,
+      payment_payload: 1,
+      payment_payload_value: 1,
+      notes: "test",
+      stage: 1,
+      charge: 0
+    }
+
+    this.setState({ isLoading: false })
+    console.log(parameter)
+    Api.request(Routes.withdrawalCreate, parameter, response => {
+      console.log("request",response)
+      this.setState({ isLoading: false })
+    }, error => {
+      this.setState({ isLoading: false })
+      console.log({ error })
+    })
+
+    if(resend == false){
+      this.setState({isOtpModal:true})
+    }
+  }
+
+  balanceRender = (data) => {
     return(
-   
-      <View style={{flexDirection:'row', justifyContent:'space-between',borderBottomWidth:0.25,marginHorizontal:20,padding:15}}>
-     
-      <Text style={{fontWeight:'bold',fontSize:15}} >{details.currency}</Text>
-      <Text style={{fontSize:15}}>{`${details.currency} ${details.balance}`}</Text>
-      
+      <View>
+        {
+          data.map(item => {
+            return (
+              <View style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                borderBottomWidth: 0.25,
+                marginHorizontal: 20,
+                padding: 15
+              }}>
+                <Text style={{
+                  fontWeight: 'bold',
+                  fontSize: 15
+                }}>
+                  {
+                    item.currency
+                  }
+                </Text>
+                <Text style={{
+                  fontSize:15,
+                  fontWeight: 'bold'
+                }}>
+                  {
+                    parseFloat(item.balance).toFixed(2)
+                  }
+                </Text>
+              </View>
+            )
+          })
+        }
       </View>
     )
   }
 
- OTPmodalOpen=(resend)=>
- {
-  
-  this.setState({ isLoading: true })
-  const parameter = {
-    amount:this.state.amount,
-    account_id:this.props.state.user.id,
-    account_code:this.props.state.user.code,
-    currency:this.state.type,
-    payment_payload:1,
-    payment_payload_value:1,
-    notes:"test",
-    stage:1,
-    charge:0,
-  }
-
-
-  this.setState({ isLoading: false })
-  console.log(parameter)
-  Api.request(Routes.withdrawalCreate, parameter, response => {
-    console.log("request",response)
-    this.setState({ isLoading: false })
-  }, error => {
-    this.setState({ isLoading: false })
-    console.log({ error })
-  })
-
-  if(resend==false)
-  {
-  this.setState({isOtpModal:true})
-  }
- 
- }
-
- 
-
- transferModalOpen=()=>
- {
-   return(
-    <Modal isVisible={this.state.transferModal}>
-    <View style={styles.modalContainer}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={{
-            width: '70%'
-          }}
-          >
-            <Text style={styles.text}>Transfer</Text>
-          </View>
-          <View style={{
-            width: '30%',
-            alignItems: 'flex-end',
-            justifyContent: 'center'
-          }}>
-            <TouchableOpacity onPress={() => this.setState({transferModal:false})} style={styles.close}>
-              <FontAwesomeIcon icon={ faTimes } style={{
-                color: Color.danger
-              }} size={BasicStyles.iconSize} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.content}>
-        <View style={{flexDirection:'row',justifyContent:'space-evenly',marginTop:25, marginBottom:15}}>
-        <TouchableOpacity
-              onPress={()=>{this.setState({type:"PHP"})}}
-              style={this.state.type=="PHP" ? styles.buttonPicked : styles.notPicked}
-              >
-              <Text style={{
-                  color:this.state.type=="PHP" ? '#FF5B04' : '#CCCCCC',
-                textAlign: 'center',
-                
-              }}>PHP</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-             onPress={()=>{this.setState({type:"USD"})}}
-             style={this.state.type=="USD" ? styles.buttonPicked : styles.notPicked}
-              >
-              <Text style={{
-                color:this.state.type=="USD" ? '#FF5B04' : '#CCCCCC',
-                textAlign: 'center',
-                
-              }}>USD</Text>
-            </TouchableOpacity>
-    
-        </View>
-        <View style={{paddingLeft:15,paddingTop:5,paddingBottom:5}}>
-        <View style={{
-          position: 'relative', width:'100%'
-        }}>
-        <Text>Input Amount to Transfer:</Text>
-        </View>
-         <TextInput
-            style={{fontSize:20}}
-            onChangeText={(amount) => {
-              this.setState({amount})
-            }}
-            value={this.state.amount}
-            placeholder={Currency.display(0,this.state.type)}
-          />
-          </View>
-        </View>
+  renderHistory = (data) => {
+    return(
+      <View>
         {
-            this.footerActions()   
+          data.map(item => {
+            return (
+              <View style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                borderBottomWidth: 0.25,
+                marginHorizontal: 20,
+                paddingLeft: 10,
+                paddingRight: 10,
+                paddingTop: 15,
+                paddingBottom: 15
+              }}>
+                <Text style={{
+                }}>
+                  {
+                    item.description
+                  }
+                </Text>
+                <Text style={{
+                  color: item.amount >= 0 ? Color.primary : Color.danger,
+                  fontWeight: 'bold'
+                }}>
+                  {
+                    (item.amount >= 0 ? '+' : '-') + Currency.display(item.amount, item.currency)
+                  }
+                </Text>
+              </View>
+            )
+          })
         }
       </View>
-    </View>
-  
-    {this.state.isLoading ? <Spinner mode="overlay"/> : null }
-  </Modal>
+    )
+  }
 
-   )
+ transferModalOpen = () => {
+   return(
+    <Modal isVisible={this.state.transferModal}>
+      <View style={styles.modalContainer}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <View style={{
+              width: '70%'
+            }}
+            >
+              <Text style={styles.text}>Transfer</Text>
+            </View>
+            <View style={{
+              width: '30%',
+              alignItems: 'flex-end',
+              justifyContent: 'center'
+            }}>
+              <TouchableOpacity onPress={() => this.setState({transferModal:false})} style={styles.close}>
+                <FontAwesomeIcon icon={ faTimes } style={{
+                  color: Color.danger
+                }} size={BasicStyles.iconSize} />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.content}>
+          <View style={{flexDirection:'row',justifyContent:'space-evenly',marginTop:25, marginBottom:15}}>
+          <TouchableOpacity
+                onPress={()=>{this.setState({type:"PHP"})}}
+                style={this.state.type=="PHP" ? styles.buttonPicked : styles.notPicked}
+                >
+                <Text style={{
+                    color:this.state.type=="PHP" ? '#FF5B04' : '#CCCCCC',
+                  textAlign: 'center',
+                  
+                }}>PHP</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+               onPress={()=>{this.setState({type:"USD"})}}
+               style={this.state.type=="USD" ? styles.buttonPicked : styles.notPicked}
+                >
+                <Text style={{
+                  color:this.state.type=="USD" ? '#FF5B04' : '#CCCCCC',
+                  textAlign: 'center',
+                  
+                }}>USD</Text>
+              </TouchableOpacity>
+      
+          </View>
+          <View style={{paddingLeft:15,paddingTop:5,paddingBottom:5}}>
+          <View style={{
+            position: 'relative', width:'100%'
+          }}>
+          <Text>Input Amount to Transfer:</Text>
+          </View>
+           <TextInput
+              style={{fontSize:20}}
+              onChangeText={(amount) => {
+                this.setState({amount})
+              }}
+              value={this.state.amount}
+              placeholder={Currency.display(0,this.state.type)}
+            />
+            </View>
+          </View>
+          {
+              this.footerActions()   
+          }
+        </View>
+      </View>
+    
+      {this.state.isLoading ? <Spinner mode="overlay"/> : null }
+    </Modal>
+    )
  }
 
- check=()=>
- {
+ check = () => {
    console.log(Currency.display(0,this.state.type))
  }
 
@@ -257,138 +328,82 @@ class Ledgers extends Component {
           }]}>Cancel</Text>
         </TouchableOpacity>
       </View>    
-          <View style={{
-            width: '50%',
-            alignItems: 'center',
-            borderLeftColor: Color.gray,
-            borderLeftWidth: 1
-          }}>
-            <TouchableOpacity 
-              onPress={() => this.OTPmodalOpen(false)}
-              underlayColor={Color.gray}
-              >
-              <Text style={[styles.text, {
-                color: Color.primary
-              }]}>Proceed</Text>
-            </TouchableOpacity>
-          </View>
-        
-    
-      
+        <View style={{
+          width: '50%',
+          alignItems: 'center',
+          borderLeftColor: Color.gray,
+          borderLeftWidth: 1
+        }}>
+          <TouchableOpacity 
+            onPress={() => this.OTPmodalOpen(false)}
+            underlayColor={Color.gray}
+            >
+            <Text style={[styles.text, {
+              color: Color.primary
+            }]}>Proceed</Text>
+          </TouchableOpacity>
+        </View>
     </View>
 
   );
-}
- 
-onSuccess=()=>
-{
-  const parameter2={
-    amount:this.state.amount,
-    account_id:this.props.state.user.id,
-    account_code:this.props.state.user.code,
-    currency:this.state.type,
-    payment_payload:1,
-    payment_payload_value:1,
-    notes:"test",
-    stage:2,
-    charge:0,
-  }
-
-  this.setState({ isLoading: false })
-  Api.request(Routes.withdrawalCreate, parameter2, response => {
-    this.setState({ isLoading: false })
-  }, error => {
-    this.setState({ isLoading: false })
-    console.log({ error })
-  })
-
-  this.setState({isOtpModal:false})
 }
 
   render() {
     const { user, isLoading } = this.props.state; 
     const { data, selected } = this.state;
-    const {balance}=this.state;
+    const { balance, history } = this.state;
     return (
       <ScrollView
         style={styles.ScrollView}
-    
-        >
-          
+        > 
           <Image
-            source={require("../../assets/logo-alt.png")}
-           style={{marginTop:20,height:80,width:80, alignSelf:'center'}} /> 
-          <View style={{marginTop:15}}>
-            <Text style={{alignSelf:'center',fontWeight:'bold',fontSize:20,marginBottom:10}}>E-Wallet Balance</Text>
-            {balance.map((details)=>this.balanceRender(details))}
-          </View>
-        
-          {
-              (this.state.balance[0].balance > 0 || this.state.balance[1].balance > 0) && ( 
-              <ScrollView style={{paddingHorizontal:20,marginTop:15,height:190,backgroundColor:'#EDEDED'}} 
-              onScroll={({nativeEvent}) => {
-            if (isCloseToBottom(nativeEvent)) {
-          
-           this.retrieve({offset:this.state.offset+5})
-         }
-       }}
-       scrollEventThrottle={400}>
-         
-        
-           {this.state.history.map((details)=>(
-               <Ledger details={details} key={details.id}/>
-             ))}
-             {this.state.isLoading ? <Spinner mode="full" /> : null}
-             </ScrollView>)}
-        
-             {
-              (this.state.balance[0].balance > 0 || this.state.balance[1].balance > 0) && ( 
-                <View style={{justifyContent:'center',width:'100%',flexDirection:'row',backgroundColor:'white',height:90}}>
-                <TouchableOpacity
-                        onPress={() => this.setState({transferModal:true})} 
-                        style={{
-                          position:'absolute',
-                          justifyContent: 'center',
-                          height: 50,
-                          width: '60%',
-                          borderRadius:10,
-                          bottom:20,
-                          backgroundColor:'#FF5B04',
-                        
-                          
-                        }}
-                        >
-                          <View style={{flexDirection:'row',justifyContent:'center'}}>
-                       
-                        <Text style={{
-                          color:'white',
-                          alignSelf:'center',
-                      
-                        }}>Withdraw</Text>
-                            
-                       </View>
-                  </TouchableOpacity>
-                  
-                  </View>
-              )}
+            source={require("src/assets/logo-alt.png")}
+            style={{marginTop:20,height:80,width:80, alignSelf:'center'}} 
+           />
 
+          <View style={{marginTop:15}}>
+            <Text style={{
+              alignSelf:'center',
+              fontWeight:'bold',
+              marginBottom:10
+            }}>E-Wallet Balance</Text>
+            {
+              this.balanceRender(balance)
+            }
+          </View>
+
+          {
+            history.length > 0 && (
+            <View style={{marginTop:15}}>
+              <Text style={{
+              paddingLeft: 20,
+              fontWeight: 'bold',
+              marginBottom:10,
+              marginTop: 10
+            }}>Recent Activity</Text>
+                {
+                  this.renderHistory(history)
+                }
+              </View>
+            )
+          }
+      
      
-        <Otp visible={this.state.isOtpModal} 
-title={"OTP"}    
-actionLabel={{
-    yes: 'Authenticate',
-    no: 'Cancel'
-  }}
-  error={''}
-  blockedFlag={false}
-  onSuccess={()=>this.onSuccess()}
-  onResend={()=>this.OTPmodalOpen(true)}
-  onCancel={() => this.setState({isOtpModal: false,isLoading:false})}/>
- 
-  
-  
-  {this.transferModalOpen()}
- 
+            <Otp visible={this.state.isOtpModal} 
+                title={"OTP"}    
+                actionLabel={{
+                yes: 'Authenticate',
+                no: 'Cancel'
+              }}
+              error={''}
+              blockedFlag={false}
+              onSuccess={()=>this.onSuccess()}
+              onResend={()=>this.OTPmodalOpen(true)}
+              onCancel={() => this.setState({isOtpModal: false,isLoading:false})}
+            />
+         
+          {this.transferModalOpen()}
+
       </ScrollView>
     );
   }

@@ -3,7 +3,7 @@ import {View, Image, TouchableHighlight, Text, ScrollView, FlatList, Dimensions,
 import { NavigationActions } from 'react-navigation';
 import { Thumbnail, List, ListItem, Separator } from 'native-base';
 import { connect } from 'react-redux';
-import { faMapMarker, faPhoneAlt } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarker, faPhoneAlt,faStar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import Style from './Style.js';
 import MapView, { PROVIDER_GOOGLE, Marker,Callout } from 'react-native-maps';
@@ -15,6 +15,7 @@ import * as Progress from 'react-native-progress';
 import CONFIG from 'src/config.js';
 import Api from 'services/api/index.js';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
+import CreateRatings from 'components/Rating/StandardRatings.js';
 
 const width = Math.round(Dimensions.get('window').width);
 const height = Math.round(Dimensions.get('window').height);
@@ -31,6 +32,8 @@ class Delivery extends Component {
         longitudeDelta: 0.0421,
       },
       data: {},
+      ratingModal: false,
+      ratingData: null
     } 
   }
 
@@ -74,9 +77,9 @@ class Delivery extends Component {
       console.log(location)
       const parameter = {
         checkout_id: this.state.data.id,
-        sender:"rider",
-        longitude:location.longitude,
-        latitude:location.latitude,
+        sender: "rider",
+        longitude: location.longitude,
+        latitude: location.latitude,
       }
       console.log(parameter)
       BackgroundGeolocation.startTask(taskKey => {
@@ -97,8 +100,9 @@ class Delivery extends Component {
   }
 
   retrieve(){
-    const { order } = this.props.state;
-    if(order == null){
+    const { order, user } = this.props.state;
+
+    if(order == null || user == null){
       this.props.navigation.navigate('drawerStack');
       return
     }
@@ -107,7 +111,8 @@ class Delivery extends Component {
         value: order.checkout_id,
         column: 'id',
         clause: '='
-      }]
+      }],
+      rider: user.id
     }
     Api.request(Routes.checkoutRetrieveByRider, parameter, response => {
       console.log(response.data[0])
@@ -196,11 +201,31 @@ class Delivery extends Component {
     );
   }
 
+  submitRatings(type){
+    const { order } = this.props.state;
+    if(order == null){
+      return
+    }
+    console.log('order', order)
+    let data = {
+      payload: type,
+      payload_value: type == 'merchant' ? order.merchant_id : order.account_id,
+      payload1: 'checkout',
+      payload_value1: order.checkout_id
+    }
+    this.setState({
+      ratingModal: true,
+      ratingData: data
+    })
+  }
+
   viewMore = () => {
     this.setState({
       viewerHeight: this.state.viewerHeight != 70 ? 70 : '50%'
     })
   }
+
+
 
   onRegionChange=(regionUpdate)=> {
     console.log('test',regionUpdate);
@@ -358,8 +383,76 @@ class Delivery extends Component {
           {
             order.status === 'completed' && (
               <View style={[Style.borderTop, {
-                flexDirection: 'row'
               }]}>
+
+              {
+                (data.merchant_rating == null || data.customer_rating == null) && (
+
+                  <View style={{
+                    flexDirection: 'row',
+                    paddingTop: 10,
+                    paddingBottom: 10
+                  }}>
+                    {
+                      data.merchant_rating == null && (
+                        <TouchableOpacity style={{
+                          width: '45%',
+                          paddingLeft: 10,
+                          paddingRight: 10,
+                          backgroundColor: Color.primary,
+                          height: 50,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          borderRadius: 5,
+                          marginBottom: 10,
+                          marginRight: '5%'
+                        }}
+                        onPress={()=>this.submitRatings('merchant')}
+                        underlayColor={Color.primary}
+                          >
+                          <Text style={{
+                            width: '50%',
+                            textAlign: 'center',
+                            color: Color.white
+                          }}>
+                            Rate Merchant
+                          </Text>
+                        </TouchableOpacity>
+                      )
+                    }
+                    {
+                      data.customer_rating == null && (
+                        <TouchableOpacity style={{
+                            width: '45%',
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            backgroundColor: Color.secondary,
+                            height: 50,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderRadius: 5,
+                            marginBottom: 10,
+                            marginLeft: '5%'
+                          }}
+                          onPress={()=>this.submitRatings('customer')}
+                          underlayColor={Color.primary}
+                          >
+                          <Text style={{
+                            width: '50%',
+                            textAlign: 'center',
+                            color: Color.white
+                          }}>
+                            Rate Customer
+                          </Text>
+                        </TouchableOpacity>
+
+                      )
+                    }
+                  </View>
+                )
+              }
+                
+
                 <Text style={[BasicStyles.normalFontSize, {
                   width: '100%',
                   textAlign: 'center',
@@ -475,7 +568,7 @@ class Delivery extends Component {
     );
   }
   render() {
-    const { data } = this.state;
+    const { data, ratingData, ratingModal } = this.state;
     return (
       <View style={Style.MainContainer}>
         <View style={{
@@ -559,6 +652,25 @@ class Delivery extends Component {
             (data !== null && this.state.viewerHeight !== 50) && this._viewMore()
           }
           </View>
+          {
+            (ratingModal && ratingData) && (
+              <CreateRatings data={ratingData} 
+              visible={ratingModal}
+              action={(flag) => {
+                this.setState({
+                  ratingModal: flag,
+                  ratingData: null
+                })
+                this.retrieve()
+              }}
+              title={'RATE ' + ratingData.payload.toUpperCase()}
+              actionLabel={{
+                no: 'Cancel',
+                yes: 'Submit'
+              }}
+              />
+            )
+          }
         </View>
       </View>
     );

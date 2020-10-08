@@ -53,7 +53,6 @@ class MyDelivery extends Component {
       limit: this.state.limit,
       offset: (page * this.state.limit)
     }
-    console.log('parameter', parameter)
     Api.request(Routes.myDeliveryRetrieve, parameter, response => {
       console.log(response)
       this.setState({
@@ -82,7 +81,6 @@ class MyDelivery extends Component {
             offset: page + 1
           })
         }
-        console.log('new offset', this.state.offset)
       } else {
         if(active > 0){
           ToastAndroid.show('Nothing follows!', ToastAndroid.LONG);
@@ -122,6 +120,14 @@ class MyDelivery extends Component {
         {isLoading ? <Spinner mode="overlay" style={{
           zIndex: 100
         }}/> : null }
+
+        <View>
+          <Text style={{
+            textAlign: 'center',
+            paddingTop: 10
+          }}>Scroll down to load more</Text>
+        </View>
+
         {data == null && (<Empty refresh={true} onRefresh={() => this.retrieve()}/>)}
         <View style={[Style.MainContainer, {
           minHeight: height
