@@ -3,7 +3,7 @@ import {View, Image, TouchableHighlight, Text, ScrollView, FlatList, Dimensions,
 import { NavigationActions } from 'react-navigation';
 import { Thumbnail, List, ListItem, Separator } from 'native-base';
 import { connect } from 'react-redux';
-import { faMapMarker, faPhoneAlt,faStar } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarker, faPhoneAlt, faStar, faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import Style from './Style.js';
 import MapView, { PROVIDER_GOOGLE, Marker,Callout } from 'react-native-maps';
@@ -133,6 +133,19 @@ class Delivery extends Component {
         this.props.navigation.navigate('drawerStack');
       }
     })
+  }
+
+  goToMessenger(data) {
+    if (data.code == null) return
+    this.props.navigation.navigate('MessengerMessages', { 
+      checkoutData: {
+        id: data.id,
+        code: data.code,
+        merchantId: data.merchant_id,
+        customerId: data.account_id
+      },
+      messengerHeaderTitle: `***${data.code.slice(-8)}`
+    });
   }
 
   continueCompleteOrder(){
@@ -633,6 +646,12 @@ class Delivery extends Component {
             }
 
           </MapView>
+          <TouchableHighlight
+            style={Style.messengerIcon}
+            onPress={() => this.goToMessenger(data)}
+          >
+            <FontAwesomeIcon icon={faComment} color={Color.white} size={30} />
+          </TouchableHighlight>
           <View style={{
             position: 'absolute',
             zIndex: 100,

@@ -225,6 +225,7 @@ class Login extends Component {
   }
 
   managePusherResponse = (response) => {
+    const { messagesOnGroup } = this.props.state
     const { user } = this.props.state;
     const { appState } = this.state;
     const data = response.data;
@@ -267,6 +268,42 @@ class Login extends Component {
         response
       )
       this.playAudio()
+    } else if (response.type == Helper.pusher.messages) {
+      this.playAudio();
+      const { updateMessagesOnGroup } = this.props;
+      // console.log(Helper.pusher.messages, response);  
+      if (parseInt(data.messenger_group_id) == messagesOnGroup.groupId && parseInt(data.account_id) != user.id) {
+        this.playAudio();
+        updateMessagesOnGroup(data);
+        this.sendLocalNotification('Messenger', data.account.username  + 'sent a message: '  + data.message, 'Messenger')
+      }
+      // else if (parseInt(data.messenger_group_id) != messagesOnGroup.groupId && parseInt(data.account_id) != user.id) {
+      //   this.sendLocalNotification('Messenger', data.account.username  + 'sent a message: '  + data.message, 'Messenger')
+      //   const { setMessenger } = this.props;
+      //   const { messenger } = this.props.state;
+      //   var unread = parseInt(messenger.unread) + 1;
+      //   setMessenger(unread, messenger.messages);
+      // }
+    } else if (response.type == Helper.pusher.messageGroup) {
+      console.log(Helper.pusher.messageGroup, response);
+      const { updateMessengerGroup, updateMessagesOnGroupByPayload } = this.props;
+      const { messengerGroup } = this.props.state;
+      if (parseInt(data.id) == parseInt(messengerGroup.id)) {
+        this.playAudio();
+        updateMessengerGroup(data)
+        if(data.message_update == true){
+          // update messages
+          const { messengerGroup } = this.props.state;
+          CommonRequest.retrieveMessages(messengerGroup, messagesResponse => {
+            updateMessagesOnGroupByPayload(messagesResponse.data)
+          })
+        }
+      } else {
+        const { setMessenger } = this.props;
+        const { messenger } = this.props.state;
+        var unread = parseInt(messenger.unread) + 1;
+        setMessenger(unread, messenger.messages);
+      }
     }
   }
 
