@@ -9,7 +9,7 @@ import {
   Alert
 } from 'react-native';
 import { connect } from 'react-redux';
-import { NavigationActions } from 'react-navigation'
+import { NavigationActions, StackActions } from 'react-navigation'
 import { Empty } from 'components';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -121,7 +121,22 @@ class newDelivery extends Component {
             "Successful",
             "Delivery request is added to your list",
             [
-              { text: "OK", onPress: () => navigate('Delivery') }
+              { 
+                text: "OK",
+                onPress: () => {
+                  const proceedToDeliveries = NavigationActions.navigate({
+                    routeName: 'drawerStack',
+                    action: StackActions.reset({
+                      index: 0,
+                      key: null,
+                      actions: [
+                        NavigationActions.navigate({ routeName: 'Delivery' })
+                      ]
+                    })
+                  });
+                  this.props.navigation.dispatch(proceedToDeliveries)
+                }
+              }
             ],
             { cancelable: false }
           );
