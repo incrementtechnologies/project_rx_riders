@@ -580,6 +580,7 @@ class Delivery extends Component {
   }
   render() {
     const { data, ratingData, ratingModal } = this.state;
+    const { theme } = this.props.state;
     return (
       <View style={Style.MainContainer}>
         <View style={{
@@ -647,7 +648,9 @@ class Delivery extends Component {
 
           </MapView>
           <TouchableHighlight
-            style={Style.messengerIcon}
+            style={[Style.messengerIcon, {
+              backgroundColor: theme ? theme.primary : Color.primary
+            }]}
             onPress={() => this.goToMessenger(data)}
           >
             <FontAwesomeIcon icon={faComment} color={Color.white} size={30} />

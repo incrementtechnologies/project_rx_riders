@@ -53,12 +53,14 @@ class newDelivery extends Component {
 
     this.setState({ isLoading: true })
     if (type === Helper.pusher.rider) {
+      console.log('data', data.checkout_id)
       Api.request(Routes.checkoutRetrieve, {
         condition: [{
           column: 'id',
           clause: '=',
           value: data.checkout_id
-        }]
+        }],
+        rider: user.id
       }, response => {
         if (response.data.length) {
           this.setState({ delivery_details: response.data[0], isLoading: false })
@@ -211,18 +213,26 @@ class newDelivery extends Component {
                           {` ${delivery_details.name || 'Not specified'}`}
                         </Text>
                       </Text>
-                      <Text style={{ color: Color.darkGray }}>
-                        Deliver from:
-                        <Text style={{ color: '#000' }}>
-                          {` ${delivery_details.merchant_location.route  || ''} ${delivery_details.merchant_location.locality  || ''}`}
-                        </Text>
-                      </Text>
-                      <Text style={{ color: Color.darkGray }}>
-                        Deliver to:
-                        <Text style={{ color: '#000' }}>
-                          {` ${delivery_details.location.route  || ''} ${delivery_details.location.locality  || ''}`}
-                        </Text>
-                      </Text>
+                      {
+                        delivery_details.merchant_location && (
+                          <Text style={{ color: Color.darkGray }}>
+                            Deliver from:
+                            <Text style={{ color: '#000' }}>
+                              {` ${delivery_details.merchant_location.route  || ''} ${delivery_details.merchant_location.locality  || ''}`}
+                            </Text>
+                          </Text>
+                        )
+                      }
+                      {
+                        delivery_details.locality && (
+                          <Text style={{ color: Color.darkGray }}>
+                            Deliver to:
+                            <Text style={{ color: '#000' }}>
+                              {` ${delivery_details.location.route  || ''} ${delivery_details.location.locality  || ''}`}
+                            </Text>
+                          </Text>
+                        )
+                      }
                       <Text style={{ color: Color.darkGray }}>
                         With distance of:
                         <Text style={{ color: '#000' }}>
