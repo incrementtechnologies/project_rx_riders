@@ -46,7 +46,9 @@ class Delivery extends Component {
     //   }});
 
     //  }
-    this.retrieve()
+    
+    this.retrieve();
+    console.log(this.props.state)
     BackgroundGeolocation.configure({
       desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
       stationaryRadius: 50,
@@ -76,7 +78,7 @@ class Delivery extends Component {
       }})
       console.log(location)
       const parameter = {
-        checkout_id: this.state.data.id,
+        checkout_id: this.props.state.order.checkout_id,
         sender: "rider",
         longitude: location.longitude,
         latitude: location.latitude,
@@ -84,11 +86,14 @@ class Delivery extends Component {
       console.log(parameter)
       BackgroundGeolocation.startTask(taskKey => {
         Api.request(Routes.locationSharing, parameter, response => {
+          console.log("hello",parameter)
           console.log("testing22",response)
         })
         BackgroundGeolocation.endTask(taskKey);
       });
     });
+
+    BackgroundGeolocation.on('background', ()=>{console.log("Background")})
     
   
     
@@ -118,7 +123,8 @@ class Delivery extends Component {
       console.log(response.data[0])
       if(response.data.length > 0){
         this.setState({
-          data: response.data[0]
+          data: response.data[0],
+          
         })
         if(response.data[0].location !== null){
           this.setState({
@@ -129,9 +135,14 @@ class Delivery extends Component {
             }
           })
         }
+        this.setState({
+          isLoading:false,
+        })
       }else{
         this.props.navigation.navigate('drawerStack');
       }
+    }, error => {
+      console.log('error', error)
     })
   }
 
@@ -578,6 +589,8 @@ class Delivery extends Component {
       </View>
     );
   }
+
+  
   render() {
     const { data, ratingData, ratingModal } = this.state;
     const { theme } = this.props.state;
@@ -592,6 +605,7 @@ class Delivery extends Component {
             provider={PROVIDER_GOOGLE}
             showsUserLocation={true}
             followsUserLocation={true}
+        
             region={this.state.region}
             //onPress={()=>this.animate()}
             >
@@ -605,15 +619,19 @@ class Delivery extends Component {
                     longitudeDelta: 0.0421,
                   }}
                   draggable
+                  pinColor={'#00FF00'}
                   onDragEnd={(e) => {
                     // this.manageOnDragEnd(e)
                   }}
                   title={data.merchant_location.route}
-                />                
+                >    
+                <Image source={require('../../assets/merchantLocationMarker.png')} style={{ width: 50, height: 55 }} />
+                </Marker>    
+                       
               )
+              
             }
-
-
+            
             {
               (data != null && data.location != null) && (
                 <Marker
@@ -624,11 +642,14 @@ class Delivery extends Component {
                     longitudeDelta: 0.0421,
                   }}
                   draggable
+                  pinColor={Color.primary}
                   onDragEnd={(e) => {
                     // this.manageOnDragEnd(e)
                   }}
                   title={data.location.route}
-                />                
+                >              
+                <Image source={require('../../assets/userPositionMarker.png')} style={{ width: 50, height: 55 }} />
+                </Marker>   
               )
             }
 

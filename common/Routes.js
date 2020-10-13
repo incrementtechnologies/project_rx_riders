@@ -44,6 +44,7 @@ export default {
   checkoutUpdate: apiUrl + 'checkouts/update',
   filters:apiUrl + 'dashboard/categories',
   locationSharing:apiUrl + 'broadcasts/location_sharing',
+  distanceRetrieve:apiUrl + 'locations/get_distance',
   //Deposits
   depositCreate: apiUrl + 'deposits/create',
   depositRetrieve: apiUrl + 'deposits/retrieve',
