@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {View, Image, TouchableHighlight, Text, ScrollView, FlatList, Dimensions, TouchableOpacity, Alert} from 'react-native';
+import Draggable from 'react-native-draggable';
 import { NavigationActions } from 'react-navigation';
 import { Thumbnail, List, ListItem, Separator } from 'native-base';
 import { connect } from 'react-redux';
@@ -647,14 +648,15 @@ class Delivery extends Component {
             }
 
           </MapView>
-          <TouchableHighlight
-            style={[Style.messengerIcon, {
-              backgroundColor: theme ? theme.primary : Color.primary
-            }]}
-            onPress={() => this.goToMessenger(data)}
-          >
-            <FontAwesomeIcon icon={faComment} color={Color.white} size={30} />
-          </TouchableHighlight>
+          <Draggable x={width * 0.75} y={height * 0.80} z={9999} onShortPressRelease={() => this.goToMessenger(data)}>
+            <View
+              style={[Style.messengerIcon, {
+                backgroundColor: theme ? theme.primary : Color.primary
+              }]}
+            >
+              <FontAwesomeIcon icon={faComment} color={Color.white} size={30} />
+            </View>
+          </Draggable> 
           <View style={{
             position: 'absolute',
             zIndex: 100,

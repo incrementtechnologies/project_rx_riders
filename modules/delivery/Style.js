@@ -31,11 +31,8 @@ export default {
   messengerIcon: {
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'absolute',
     width: 60,
     height: 60,
-    top: height * 0.80,
-    right: '5%',
     zIndex: 9999,
     borderRadius: 40,
     backgroundColor: Color.primary,

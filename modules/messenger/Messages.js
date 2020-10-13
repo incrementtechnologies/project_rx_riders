@@ -31,7 +31,10 @@ class Messages extends Component{
       imageModalUrl: null,
       isImageModal: false,
       photo: null,
-      keyRefresh: 0
+      keyRefresh: 0,
+      isPullingMessages: false,
+      offset: 0,
+      limit: 10
     }
   }
 
@@ -81,21 +84,67 @@ class Messages extends Component{
   }
 
   retrieve = () => {
+    const { offset, limit } = this.state
     const { messengerGroup } = this.props.state;
     const { setMessagesOnGroup } = this.props;
-    console.log({ messengerGroup })
 
-    this.setState({isLoading: true});
-    CommonRequest.retrieveMessages(messengerGroup, response => {
-      this.setState({isLoading: false});
-      setMessagesOnGroup({
+    this.setState({ isLoading: true });
+
+    const parameter = {
+      condition: [{
+        value: messengerGroup.id,
+        column: 'messenger_group_id',
+        clause: '='
+      }],
+      sort: {
+        'created_at': 'DESC'
+      },
+      limit,
+      offset,
+    }
+    Api.request(Routes.messengerMessagesRetrieve, parameter, response => {
+      this.setState({ isLoading: false, offset: offset + limit });
+        setMessagesOnGroup({
         messages: response.data,
         groupId: messengerGroup.id
       })
-    }, (error) => {
-      this.setState({isLoading: false});
+    }, error => {
+      this.setState({ isLoading: false });
       console.log({ retrieveMessagesError: error })
-    })
+    });
+  }
+
+  retrieveMoreMessages = () => {
+    const { offset, limit } = this.state
+    const { messengerGroup, messagesOnGroup } = this.props.state;
+    const { setMessagesOnGroup } = this.props;
+
+    this.setState({ isLoading: true });
+
+    const parameter = {
+      condition: [{
+        value: messengerGroup.id,
+        column: 'messenger_group_id',
+        clause: '='
+      }],
+      sort: {
+        'created_at': 'DESC'
+      },
+      offset,
+      limit,
+    }
+
+    Api.request(Routes.messengerMessagesRetrieve, parameter, response => {
+      const newMessages = [...response.data.reverse(), ...messagesOnGroup.messages]
+      this.setState({ isLoading: false, offset: offset + limit });
+      setMessagesOnGroup({
+        messages: newMessages,
+        groupId: messengerGroup.id
+      })
+    }, error => {
+      this.setState({ isLoading: false });
+      console.log({ retrieveMoreMessagesError: error })
+    });
   }
 
   retrieveGroup = (flag = null) => {
@@ -565,22 +614,37 @@ class Messages extends Component{
   }
 
   render() {
-    const { isLoading, isImageModal, imageModalUrl, photo, keyRefresh } = this.state;
+    const { isLoading, isImageModal, imageModalUrl, photo, keyRefresh, isPullingMessages } = this.state;
     const { messengerGroup, user } = this.props.state;
     return (
       <View key={keyRefresh}>
+        {isLoading ? <Spinner mode="full"/> : null }
         <ScrollView
           ref={ref => this.scrollView = ref}
           onContentSizeChange={(contentWidth, contentHeight)=>{        
+            if (!isPullingMessages) {
               this.scrollView.scrollToEnd({animated: true});
+            }
           }}
           style={[Style.ScrollView, {
             height: '100%'
           }]}
-          onScroll={(event) => {
-            if(event.nativeEvent.contentOffset.y <= 0) {
+          onScroll={({ nativeEvent }) => {
+            const { layoutMeasurement, contentOffset, contentSize } = nativeEvent
+            const isOnBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height
+            const isOnTop = contentOffset.y <= 0
+
+            if (isOnTop) {
               if(this.state.isLoading == false){
-                this.retrieve()
+                if (!isPullingMessages) {
+                  this.setState({ isPullingMessages: true })
+                }
+                this.retrieveMoreMessages()
+              }
+            }
+            if (isOnBottom) {
+              if (this.state.isLoading == false && isPullingMessages) {
+                this.setState({ isPullingMessages: false })
               }
             }
           }}
@@ -591,7 +655,6 @@ class Messages extends Component{
           }}>
             {this._flatList()}
           </View>
-          {isLoading ? <Spinner mode="overlay"/> : null }
         </ScrollView>
         <View style={{
           position: 'absolute',
