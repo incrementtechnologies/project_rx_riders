@@ -3,7 +3,7 @@ import { faCreditCard, faEdit, faComments, faCheck, faPaperPlane, faUser, faTach
 export default {
   company: 'Increment Technologies',
   APP_NAME: '@RunwayExpressRiders_',
-  APP_NAME_BASIC: 'RunwayExpressRiders',
+  APP_NAME_BASIC: 'R.E. Management',
   APP_EMAIL: 'support@runwayexpress.co.uk',
   APP_WEBSITE: 'www.runwayexpress.co.uk',
   APP_HOST: 'com.runwayexpressriders',
