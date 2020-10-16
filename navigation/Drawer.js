@@ -210,6 +210,18 @@ const StackNavigator = createStackNavigator({
       headerTintColor: Color.primary,
     }),
   },
+  MyOrders: {
+    screen: Slider,
+    navigationOptions: ({ navigation }) => ({
+      title: 'My Orders',
+      headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
+      headerRight: <OptionRight navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: Color.white,
+      },
+      headerTintColor: Color.primary,
+    }),
+  },
 });
 
 const Drawer = createDrawerNavigator({

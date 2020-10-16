@@ -7,7 +7,7 @@ import Page from 'modules/delivery';
 import {NavigationActions, StackActions} from 'react-navigation';
 import { Color, BasicStyles } from 'common';
 import { connect } from 'react-redux';
-import MessengerMessages from 'modules/messenger/Messages';
+import MessengerMessages from 'components/Messenger/MessagesV2';
 
 class HeaderOptions extends Component {
   constructor(props){
