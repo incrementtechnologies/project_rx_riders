@@ -244,6 +244,7 @@ class Login extends Component {
       }
     } else if(response.type == Helper.pusher.rider) {
       if (response.data.hasOwnProperty('assigned_rider')) return
+      if (response.data.scope !== user.scope_location) return
       if (appState === 'active') {
         Alert.alert(
         `Hello ${user.username}!`,
@@ -362,7 +363,10 @@ class Login extends Component {
 
         Api.request(Routes.accountRetrieve, parameter, userInfo => {
           if(userInfo.data.length > 0){
-            login(userInfo.data[0], this.state.token);
+            login({
+              ...userInfo.data[0],
+              scope_location: response.scope_location
+            }, this.state.token);
             this.retrieveUserData(userInfo.data[0].id)
           }else{
             this.setState({isLoading: false});
@@ -442,7 +446,10 @@ class Login extends Component {
             }
             Api.request(Routes.accountRetrieve, parameter, userInfo => {
               if(userInfo.data.length > 0){
-                login(userInfo.data[0], token);
+                login({
+                  ...userInfo.data[0],
+                  scope_location: response.scope_location
+                }, token);
                 this.retrieveUserData(userInfo.data[0].id)
               }else{
                 this.setState({isLoading: false});
