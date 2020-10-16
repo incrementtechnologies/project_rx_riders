@@ -308,12 +308,18 @@ class Login extends Component {
   }
 
   retrieveUserData = (accountId) => {
+    const { user } = this.props.state
     if(Helper.retrieveDataFlag == 1){
       Pusher.listen(response => {
         this.managePusherResponse(response)
       });
       this.setState({isLoading: false});
-      this.props.navigation.navigate('drawerStack');  
+
+      if ((user.account_type + '').toLowerCase() === 'merchant') {
+        this.props.navigation.navigate('MyOrders');  
+      } else {
+        this.props.navigation.navigate('drawerStack');
+      }
     }else{
       const { setNotifications, setMessenger } = this.props;
       let parameter = {
