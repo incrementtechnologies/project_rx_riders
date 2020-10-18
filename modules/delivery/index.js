@@ -33,7 +33,8 @@ class Delivery extends Component {
       },
       data: {},
       ratingModal: false,
-      ratingData: null
+      ratingData: null,
+      remainingDistance:0,
     } 
   }
 
@@ -473,7 +474,7 @@ class Delivery extends Component {
             )
           }
           {
-            order.status != 'completed' && (
+            order.status != 'completed' && this.state.remainingDistance<0.1 && (
               <TouchableOpacity style={{
                   width: '100%',
                   paddingLeft: 10,
@@ -577,6 +578,36 @@ class Delivery extends Component {
     );
   }
 
+  getDistance=(location)=>{
+    const {data} = this.state;
+    console.log(location)
+    if(data.location!=null){
+    console.log("check userloc",data)
+   
+    const pi=Math.PI;
+    console.log(pi)
+    let riderLatitude=parseFloat(location.latitude) * (pi/180);
+    let riderLongitude=parseFloat(location.longitude) * (pi/180);
+    let userLatitude=parseFloat(data.location.latitude) * (pi/180);
+    let userLongitude=parseFloat(data.location.longitude) * (pi/180);
+
+    console.log(riderLatitude)
+
+    let delta = userLongitude - riderLongitude;
+    
+    let a= Math.pow(Math.cos(userLatitude) * Math.sin(delta),2) +
+          Math.pow(Math.cos(riderLatitude) * Math.sin(userLatitude) - Math.sin(riderLatitude) * Math.cos(userLatitude) * Math.cos(delta),2);
+
+    let b = Math.sin(riderLatitude) * Math.sin(userLatitude) + Math.cos(riderLatitude) * Math.cos(userLatitude) * Math.cos(delta);
+
+    let angle = Math.atan2(Math.sqrt(a),b);
+
+    console.log("returned value",angle*6371);
+
+    this.setState({remainingDistance:angle*6371})
+    }
+
+  }
   
   render() {
     const { data, ratingData, ratingModal } = this.state;
@@ -591,7 +622,7 @@ class Delivery extends Component {
             provider={PROVIDER_GOOGLE}
             showsUserLocation={true}
             followsUserLocation={true}
-        
+            onUserLocationChange={(location)=>data!=null ? this.getDistance(location.nativeEvent.coordinate): console.log(location)}
             region={this.state.region}
             //onPress={()=>this.animate()}
             >
