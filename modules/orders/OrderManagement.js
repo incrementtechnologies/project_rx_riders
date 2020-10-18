@@ -47,6 +47,10 @@ class OrderManagement extends Component {
         value: user.sub_account.merchant.id,
         clause: '=',
         column: 'merchant_id'
+      }, {
+        value: 'completed',
+        clause: '!=',
+        column: 'status'
       }],
       sort: {
         status: 'desc'
@@ -79,6 +83,19 @@ class OrderManagement extends Component {
     }
   }
 
+  goToMessenger(data) {
+    if (data.code == null) return
+    this.props.navigation.navigate('MessengerMessages', { 
+      checkoutData: {
+        id: data.id,
+        code: data.code,
+        merchantId: data.merchant_id,
+        customerId: data.account_id
+      },
+      messengerHeaderTitle: `***${data.code.slice(-8)}`
+    });
+  }
+
   options(){
     const { selected } = this.state;
     Animated.spring(
@@ -97,7 +114,7 @@ class OrderManagement extends Component {
             position: 'absolute',
             bottom: 0,
             left: 0,
-            height: height * 0.4,
+            height: height * 0.5,
             backgroundColor: Color.white,
             transform: [{translateY: this.state.bounceValue}],
             borderTopColor: Color.primary,
@@ -171,7 +188,11 @@ class OrderManagement extends Component {
             paddingRight: 10,
             borderBottomColor: Color.lightGray,
             borderBottomWidth: 1
-          }}>
+          }}
+          onPress={() => {
+            this.goToMessenger(selected)
+          }}
+          >
             <View style={{
               flexDirection: 'row'
             }}>
