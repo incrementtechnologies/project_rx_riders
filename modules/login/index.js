@@ -225,6 +225,7 @@ class Login extends Component {
   }
 
   managePusherResponse = (response) => {
+    const { messagesOnGroup } = this.props.state
     const { user } = this.props.state;
     const { appState } = this.state;
     const data = response.data;
@@ -243,6 +244,7 @@ class Login extends Component {
       }
     } else if(response.type == Helper.pusher.rider) {
       if (response.data.hasOwnProperty('assigned_rider')) return
+      if (response.data.scope !== user.scope_location) return
       if (appState === 'active') {
         Alert.alert(
         `Hello ${user.username}!`,
@@ -267,16 +269,58 @@ class Login extends Component {
         response
       )
       this.playAudio()
+    } else if (response.type == Helper.pusher.messages) {
+      this.playAudio();
+      const { updateMessagesOnGroup } = this.props;
+      // console.log(Helper.pusher.messages, response);  
+      if (parseInt(data.messenger_group_id) == messagesOnGroup.groupId && parseInt(data.account_id) != user.id) {
+        this.playAudio();
+        updateMessagesOnGroup(data);
+        this.sendLocalNotification('Messenger', data.account.username  + 'sent a message: '  + data.message, 'Messenger')
+      }
+      // else if (parseInt(data.messenger_group_id) != messagesOnGroup.groupId && parseInt(data.account_id) != user.id) {
+      //   this.sendLocalNotification('Messenger', data.account.username  + 'sent a message: '  + data.message, 'Messenger')
+      //   const { setMessenger } = this.props;
+      //   const { messenger } = this.props.state;
+      //   var unread = parseInt(messenger.unread) + 1;
+      //   setMessenger(unread, messenger.messages);
+      // }
+    } else if (response.type == Helper.pusher.messageGroup) {
+      console.log(Helper.pusher.messageGroup, response);
+      const { updateMessengerGroup, updateMessagesOnGroupByPayload } = this.props;
+      const { messengerGroup } = this.props.state;
+      if (parseInt(data.id) == parseInt(messengerGroup.id)) {
+        this.playAudio();
+        updateMessengerGroup(data)
+        if(data.message_update == true){
+          // update messages
+          const { messengerGroup } = this.props.state;
+          CommonRequest.retrieveMessages(messengerGroup, messagesResponse => {
+            updateMessagesOnGroupByPayload(messagesResponse.data)
+          })
+        }
+      } else {
+        const { setMessenger } = this.props;
+        const { messenger } = this.props.state;
+        var unread = parseInt(messenger.unread) + 1;
+        setMessenger(unread, messenger.messages);
+      }
     }
   }
 
   retrieveUserData = (accountId) => {
+    const { user } = this.props.state
     if(Helper.retrieveDataFlag == 1){
       Pusher.listen(response => {
         this.managePusherResponse(response)
       });
       this.setState({isLoading: false});
-      this.props.navigation.navigate('drawerStack');  
+
+      if ((user.account_type + '').toLowerCase() === 'merchant') {
+        this.props.navigation.navigate('MyOrders');  
+      } else {
+        this.props.navigation.navigate('drawerStack');
+      }
     }else{
       const { setNotifications, setMessenger } = this.props;
       let parameter = {
@@ -319,7 +363,10 @@ class Login extends Component {
 
         Api.request(Routes.accountRetrieve, parameter, userInfo => {
           if(userInfo.data.length > 0){
-            login(userInfo.data[0], this.state.token);
+            login({
+              ...userInfo.data[0],
+              scope_location: response.scope_location
+            }, this.state.token);
             this.retrieveUserData(userInfo.data[0].id)
           }else{
             this.setState({isLoading: false});
@@ -381,7 +428,7 @@ class Login extends Component {
           const token = response.token;
           Api.getAuthUser(response.token, (response) => {
             // check if user if RIDER
-            if (response.account_type !== 'RIDER' && response.account_type !== 'ADMIN') {
+            if (response.account_type !== 'MERCHANT' && response.account_type !== 'RIDER' && response.account_type !== 'ADMIN') {
               this.setState({
                 isResponseError: true,
                 responseErrorMessage: 'Please verify your account first. Contact RunwayExpress.support'
@@ -399,7 +446,10 @@ class Login extends Component {
             }
             Api.request(Routes.accountRetrieve, parameter, userInfo => {
               if(userInfo.data.length > 0){
-                login(userInfo.data[0], token);
+                login({
+                  ...userInfo.data[0],
+                  scope_location: response.scope_location
+                }, token);
                 this.retrieveUserData(userInfo.data[0].id)
               }else{
                 this.setState({isLoading: false});

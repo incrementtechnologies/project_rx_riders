@@ -20,12 +20,21 @@ export default {
     left: 0,
     right: 0,
     width,
-    height
+    height,
   },
   borderTop: {
     borderTopWidth: 1,
     borderTopColor: Color.lightGray,
     paddingTop: 10,
     paddingBottom: 10
+  },
+  messengerIcon: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 60,
+    height: 60,
+    zIndex: 9999,
+    borderRadius: 40,
+    backgroundColor: Color.primary,
   }
 }

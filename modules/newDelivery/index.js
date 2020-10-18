@@ -9,7 +9,7 @@ import {
   Alert
 } from 'react-native';
 import { connect } from 'react-redux';
-import { NavigationActions } from 'react-navigation'
+import { NavigationActions, StackActions } from 'react-navigation'
 import { Empty } from 'components';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -53,12 +53,14 @@ class newDelivery extends Component {
 
     this.setState({ isLoading: true })
     if (type === Helper.pusher.rider) {
+      console.log('data', data.checkout_id)
       Api.request(Routes.checkoutRetrieve, {
         condition: [{
           column: 'id',
           clause: '=',
           value: data.checkout_id
-        }]
+        }],
+        rider: user.id
       }, response => {
         if (response.data.length) {
           this.setState({ delivery_details: response.data[0], isLoading: false })
@@ -121,7 +123,22 @@ class newDelivery extends Component {
             "Successful",
             "Delivery request is added to your list",
             [
-              { text: "OK", onPress: () => navigate('Delivery') }
+              { 
+                text: "OK",
+                onPress: () => {
+                  const proceedToDeliveries = NavigationActions.navigate({
+                    routeName: 'drawerStack',
+                    action: StackActions.reset({
+                      index: 0,
+                      key: null,
+                      actions: [
+                        NavigationActions.navigate({ routeName: 'Delivery' })
+                      ]
+                    })
+                  });
+                  this.props.navigation.dispatch(proceedToDeliveries)
+                }
+              }
             ],
             { cancelable: false }
           );
@@ -196,18 +213,26 @@ class newDelivery extends Component {
                           {` ${delivery_details.name || 'Not specified'}`}
                         </Text>
                       </Text>
-                      <Text style={{ color: Color.darkGray }}>
-                        Deliver from:
-                        <Text style={{ color: '#000' }}>
-                          {` ${delivery_details.merchant_location.route  || ''} ${delivery_details.merchant_location.locality  || ''}`}
-                        </Text>
-                      </Text>
-                      <Text style={{ color: Color.darkGray }}>
-                        Deliver to:
-                        <Text style={{ color: '#000' }}>
-                          {` ${delivery_details.location.route  || ''} ${delivery_details.location.locality  || ''}`}
-                        </Text>
-                      </Text>
+                      {
+                        delivery_details.merchant_location && (
+                          <Text style={{ color: Color.darkGray }}>
+                            Deliver from:
+                            <Text style={{ color: '#000' }}>
+                              {` ${delivery_details.merchant_location.route  || ''} ${delivery_details.merchant_location.locality  || ''}`}
+                            </Text>
+                          </Text>
+                        )
+                      }
+                      {
+                        delivery_details.locality && (
+                          <Text style={{ color: Color.darkGray }}>
+                            Deliver to:
+                            <Text style={{ color: '#000' }}>
+                              {` ${delivery_details.location.route  || ''} ${delivery_details.location.locality  || ''}`}
+                            </Text>
+                          </Text>
+                        )
+                      }
                       <Text style={{ color: Color.darkGray }}>
                         With distance of:
                         <Text style={{ color: '#000' }}>

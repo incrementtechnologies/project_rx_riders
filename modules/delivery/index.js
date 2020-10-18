@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import {View, Image, TouchableHighlight, Text, ScrollView, FlatList, Dimensions, TouchableOpacity, Alert} from 'react-native';
+import Draggable from 'react-native-draggable';
 import { NavigationActions } from 'react-navigation';
 import { Thumbnail, List, ListItem, Separator } from 'native-base';
 import { connect } from 'react-redux';
-import { faMapMarker, faPhoneAlt,faStar } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarker, faPhoneAlt, faStar, faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import Style from './Style.js';
 import MapView, { PROVIDER_GOOGLE, Marker,Callout } from 'react-native-maps';
@@ -145,6 +146,19 @@ class Delivery extends Component {
     }, error => {
       console.log('error', error)
     })
+  }
+
+  goToMessenger(data) {
+    if (data.code == null) return
+    this.props.navigation.navigate('MessengerMessages', { 
+      checkoutData: {
+        id: data.id,
+        code: data.code,
+        merchantId: data.merchant_id,
+        customerId: data.account_id
+      },
+      messengerHeaderTitle: `***${data.code.slice(-8)}`
+    });
   }
 
   continueCompleteOrder(){
@@ -611,6 +625,7 @@ class Delivery extends Component {
   
   render() {
     const { data, ratingData, ratingModal } = this.state;
+    const { theme } = this.props.state;
     return (
       <View style={Style.MainContainer}>
         <View style={{
@@ -685,6 +700,15 @@ class Delivery extends Component {
             }
 
           </MapView>
+          <Draggable x={width * 0.75} y={height * 0.80} z={9999} onShortPressRelease={() => this.goToMessenger(data)}>
+            <View
+              style={[Style.messengerIcon, {
+                backgroundColor: theme ? theme.primary : Color.primary
+              }]}
+            >
+              <FontAwesomeIcon icon={faComment} color={Color.white} size={30} />
+            </View>
+          </Draggable> 
           <View style={{
             position: 'absolute',
             zIndex: 100,

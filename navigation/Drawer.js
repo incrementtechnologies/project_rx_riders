@@ -4,7 +4,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
-import Slider from 'components/Slider/WithIcons.js';
+import Slider from 'modules/slider';
 import { Color, BasicStyles } from 'common';
 import Dashboard from 'modules/delivery';
 import Delivery from 'modules/delivery/MyDelivery.js';
@@ -210,6 +210,18 @@ const StackNavigator = createStackNavigator({
       headerTintColor: Color.primary,
     }),
   },
+  MyOrders: {
+    screen: Slider,
+    navigationOptions: ({ navigation }) => ({
+      title: 'My Orders',
+      headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
+      headerRight: <OptionRight navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: Color.white,
+      },
+      headerTintColor: Color.primary,
+    }),
+  },
 });
 
 const Drawer = createDrawerNavigator({
@@ -217,6 +229,12 @@ const Drawer = createDrawerNavigator({
     screen: StackNavigator,
     navigationOptions: {
       drawerLabel: 'My Deliveries',
+    },
+  },
+  MyOrders: {
+    screen: StackNavigator,
+    navigationOptions: {
+      drawerLabel: 'My Orders',
     },
   },
   Dashboard: {

@@ -7,6 +7,7 @@ import Page from 'modules/delivery';
 import {NavigationActions, StackActions} from 'react-navigation';
 import { Color, BasicStyles } from 'common';
 import { connect } from 'react-redux';
+import MessengerMessages from 'components/Messenger/MessagesV2';
 
 class HeaderOptions extends Component {
   constructor(props){
@@ -52,7 +53,14 @@ const MapStack = createStackNavigator({
       },
       headerTransparent: true
     })
-  }
+  },
+  MessengerMessages: {
+    screen: MessengerMessages,
+    navigationOptions: ({ navigation }) => ({
+      title: navigation.getParam('messengerHeaderTitle'),
+      headerTintColor: '#000'
+    }),
+  },
 })
 
 const mapStateToProps = state => ({ state: state });

@@ -3,19 +3,11 @@ import { faCreditCard, faEdit, faComments, faCheck, faPaperPlane, faUser, faTach
 export default {
   company: 'Increment Technologies',
   APP_NAME: '@RunwayExpressRiders_',
-  APP_NAME_BASIC: 'RunwayExpressRiders',
+  APP_NAME_BASIC: 'R.E. Management',
   APP_EMAIL: 'support@runwayexpress.co.uk',
   APP_WEBSITE: 'www.runwayexpress.co.uk',
   APP_HOST: 'com.runwayexpressriders',
   DrawerMenu: [
-  // {
-  //   title: 'Dashboard',
-  //   route: 'Dashboard',
-  //   icon: faTachometerAlt,
-  //   iconStyle: {
-  //     color: Color.primary
-  //   }
-  // },
   {
     title: 'Deliveries',
     route: 'Delivery',
@@ -40,14 +32,24 @@ export default {
       color: Color.primary
     }
   }
-  // {
-  //   title: 'My Profile',
-  //   route: 'Profile',
-  //   icon: faUser,
-  //   iconStyle: {
-  //     color: Color.primary
-  //   }
-  // }
+  ],
+  DrawerMenuMerchant: [
+  {
+    title: 'My Orders',
+    route: 'MyOrders',
+    icon: faShippingFast,
+    iconStyle: {
+      color: Color.primary
+    }
+  },
+  {
+    title: 'Wallet',
+    route: 'Ledger',
+    icon: faCreditCard,
+    iconStyle: {
+      color: Color.primary
+    }
+  }
   ],
   DrawerMenuLogout: [],
   DrawerMenuBottom: [{
@@ -80,7 +82,9 @@ export default {
     channel: 'runway',
     notifications: 'App\\Events\\Notifications',
     rider: 'App\\Events\\Rider',
-    typing: 'typing'
+    typing: 'typing',
+    messages: 'App\\Events\\Message',
+    messageGroup: 'App\\Events\\MessageGroup',
   },
   tutorials: [
     {
