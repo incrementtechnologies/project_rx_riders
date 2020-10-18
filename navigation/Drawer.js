@@ -20,6 +20,7 @@ import Settings from 'modules/settings';
 import Referral from 'modules/referral';
 import NewDelivery from 'modules/newDelivery';
 import Deposit from 'modules/deposit';
+import OrderManagement from 'modules/orders/OrderManagement.js';
 import { connect } from 'react-redux';
 import Ledger from 'modules/Ledger';
 
@@ -211,7 +212,7 @@ const StackNavigator = createStackNavigator({
     }),
   },
   MyOrders: {
-    screen: Slider,
+    screen: OrderManagement,
     navigationOptions: ({ navigation }) => ({
       title: 'My Orders',
       headerLeft: <MenuDrawerStructure navigationProps={navigation} />,

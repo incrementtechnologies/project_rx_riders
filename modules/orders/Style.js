@@ -36,5 +36,15 @@ export default {
     borderColor: Color.gray,
     borderRadius: 10,
     marginBottom: 20
+  },
+  orderManagementCard: {
+    width: '100%',
+    height: 100,
+    padding: 10,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: Color.gray,
+    borderRadius: 10,
+    marginBottom: 20
   }
 }

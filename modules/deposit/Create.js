@@ -90,15 +90,19 @@ class CreateStack extends Component {
     const { amount, currency, payload, payload_value, notes, added, files} = this.state;
     if(amount < 1000){
       ToastAndroid.show('Minimum amount is ' + currency +' 1000', ToastAndroid.LONG);
+      return
     }
     if(payload == null){
       ToastAndroid.show('Payment Center is required', ToastAndroid.LONG);
+      return
     }
     if(files.length == 0){
       ToastAndroid.show('Deposit Receipt is required', ToastAndroid.LONG);
+      return
     }
     if(added.length == 0){
       ToastAndroid.show('Deliveries is required', ToastAndroid.LONG);
+      return
     }
     const { user } = this.props.state;
     if(user == null){

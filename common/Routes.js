@@ -27,6 +27,7 @@ export default {
   // checkout
   checkoutCreate: apiUrl + 'checkouts/create',
   checkoutRetrieve: apiUrl + 'checkouts/retrieve_by_rider',
+  checkoutRetrieveOrdersMerchant: apiUrl + 'checkouts/retrieve_orders',
   // Deliveries
   deliveryCreate: apiUrl + 'deliveries/create',
   deliveryRetrieve: apiUrl + 'deliveries/retrieve',

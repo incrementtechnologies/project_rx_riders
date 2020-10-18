@@ -60,6 +60,7 @@ class Deposit extends Component {
       isLoading: true
     })
     Api.request(Routes.depositRetrieve, parameter, response => {
+      console.log('depositRetrieve', parameter)
       this.setState({
         isLoading: false,
         data: response.data
