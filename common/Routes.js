@@ -34,6 +34,7 @@ export default {
   checkoutRetrieveOrdersMerchantMobile: apiUrl + 'checkouts/retrieve_orders_mobile',
   checkoutRetrieveByRider: apiUrl + 'checkouts/retrieve_by_rider',
   checkoutUpdate: apiUrl + 'checkouts/update',
+  orderItemsRetrieve: apiUrl + 'checkout_items/retrieve_on_orders',
   // Deliveries
   deliveryCreate: apiUrl + 'deliveries/create',
   deliveryRetrieve: apiUrl + 'deliveries/retrieve',

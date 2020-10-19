@@ -20,6 +20,7 @@ import Style from './Style';
 import _ from 'lodash';
 import OrderManagementCard from './OrderManagementCard';
 import CreateRatings from 'components/Rating/StandardRatings.js';
+import OrderItems from 'modules/orders/OrderItems.js';
 
 const height = Math.round(Dimensions.get('window').height);
 
@@ -36,7 +37,8 @@ class OrderManagement extends Component {
       checkout: null,
       limit: 5,
       offset: 0,
-      numberOfPages: null
+      numberOfPages: null,
+      isViewItem: false
     }
   }
 
@@ -346,7 +348,9 @@ class OrderManagement extends Component {
             borderBottomWidth: 1
           }}
           onPress={() => {
-            this.goToMessenger(checkout)
+            this.setState({
+              isViewItem: true
+            })
           }}
           underlayColor={Color.gray}
           >
@@ -355,7 +359,7 @@ class OrderManagement extends Component {
             }}>
               <Text style={{
                 width: '80%'
-              }}>Show Products</Text>
+              }}>View Products</Text>
               <Text style={{
                   width: '20%',
                   textAlign: 'right'
@@ -503,6 +507,7 @@ class OrderManagement extends Component {
   render() {
     const { user, theme } = this.props.state
     const { isLoading, data,selected, ratingData, ratingModal, checkout } = this.state
+    const { isViewItem } = this.state;
     return (
       <View style={Style.MainContainer}>
         <ScrollView
@@ -577,6 +582,15 @@ class OrderManagement extends Component {
                 no: 'Cancel',
                 yes: 'Submit'
               }}
+              />
+            )
+          }
+          {
+            (isViewItem && checkout) && (
+              <OrderItems
+                visible={isViewItem}
+                data={checkout}
+                setVisible={() => this.setState({ isViewItem: false })}
               />
             )
           }
