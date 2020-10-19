@@ -39,7 +39,7 @@ export default {
   },
   orderManagementCard: {
     width: '100%',
-    height: 100,
+    height: 110,
     padding: 10,
     borderWidth: 1,
     borderStyle: 'dashed',

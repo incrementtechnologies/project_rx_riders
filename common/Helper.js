@@ -43,16 +43,16 @@ export default {
     }
   },
   {
-    title: 'Wallet',
-    route: 'Ledger',
+    title: 'Products',
+    route: 'Products',
     icon: faCreditCard,
     iconStyle: {
       color: Color.primary
     }
   },
   {
-    title: 'Products',
-    route: 'Products',
+    title: 'Wallet',
+    route: 'Ledger',
     icon: faCreditCard,
     iconStyle: {
       color: Color.primary

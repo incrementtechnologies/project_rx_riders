@@ -24,11 +24,13 @@ class OrderManagementCard extends Component {
   }
 
   render() {
-    const { data } = this.props
+    const { data, length, key } = this.props
     
     return (
       <TouchableOpacity onPress={() => this.props.onClick(data)}>
-        <View style={Style.orderManagementCard}>
+        <View style={[Style.orderManagementCard, {
+          marginBottom: length == key ? 100 : 20
+        }]}>
           <View style={{
             flexDirection: 'row',
             width: '100%'
@@ -46,7 +48,8 @@ class OrderManagementCard extends Component {
                 <Text style={{
                   fontWeight: 'bold',
                   color: Color.primary,
-                  textAlign: 'right'
+                  textAlign: 'right',
+                  fontSize: 11
                 }}>
                   {Currency.display(data.total, data.currency)}
                 </Text>
@@ -57,21 +60,45 @@ class OrderManagementCard extends Component {
               width: '100%'
             }}>
             <Text numberOfLines={2}>
-              <Text style={{ fontWeight: '600' }}>
+              <Text style={{
+                fontSize: 13, 
+                marginBottom: 10
+              }}>
                 Delivery To: {' '}
               </Text>
-              <Text>
+              <Text style={{
+                fontSize: 13
+              }}>
                 {data.location}
               </Text>
             </Text>
+            <View style={{
+              flexDirection: 'row',
+              paddingTop: 10,
+              paddingBottom: 10
+            }}>
+            <Text style={{
+              width: '50%',
+              color: Color.gray,
+              fontSize: 11
+            }}>
+              {
+                data.date
+              }
+            </Text>
+
             <Text style={{
               color: this.getStatusColor(data.status),
-              fontWeight: 'bold'
+              fontWeight: 'bold',
+              textAlign: 'right',
+              width: '50%',
+              fontSize: 11
             }}>
               {
                 data.status.toUpperCase()
               }
             </Text>
+            </View>
           </View>
         </View>
       </TouchableOpacity>

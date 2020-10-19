@@ -31,6 +31,8 @@ export default {
   checkoutCreate: apiUrl + 'checkouts/create',
   checkoutRetrieve: apiUrl + 'checkouts/retrieve_by_rider',
   checkoutRetrieveOrdersMerchant: apiUrl + 'checkouts/retrieve_orders',
+  checkoutRetrieveOrdersMerchantMobile: apiUrl + 'checkouts/retrieve_orders_mobile',
+  checkoutRetrieveByRider: apiUrl + 'checkouts/retrieve_by_rider',
   // Deliveries
   deliveryCreate: apiUrl + 'deliveries/create',
   deliveryRetrieve: apiUrl + 'deliveries/retrieve',
@@ -42,7 +44,6 @@ export default {
   // Merchants
   merchantsRetrieve: apiUrl + 'merchants/retrieve',
   //Checkout
-  checkoutRetrieveByRider: apiUrl + 'checkouts/retrieve_by_rider',
   ledgerSummary: apiUrl+ 'ledger/summary',
   ledgerHistory: apiUrl + 'ledger/history',
   checkoutUpdate: apiUrl + 'checkouts/update',

@@ -6,7 +6,7 @@ import {
   Button,
   Dimensions,
   Animated,
-  TouchableOpacity
+  TouchableHighlight
 } from 'react-native';
 import { NavigationActions } from 'react-navigation'
 import { connect } from 'react-redux';
@@ -17,8 +17,9 @@ import { Spinner } from 'components';
 import Api from 'services/api';
 import { Routes, Helper, BasicStyles, Color } from 'common';
 import Style from './Style';
-
+import _ from 'lodash';
 import OrderManagementCard from './OrderManagementCard';
+import CreateRatings from 'components/Rating/StandardRatings.js';
 
 const height = Math.round(Dimensions.get('window').height);
 
@@ -29,15 +30,21 @@ class OrderManagement extends Component {
       isLoading: false,
       data: [],
       selected: null,
-      bounceValue: new Animated.Value(100)
+      bounceValue: new Animated.Value(100),
+      ratingModal: false,
+      ratingData: null,
+      checkout: null,
+      limit: 5,
+      offset: 0,
+      numberOfPages: null
     }
   }
 
   componentDidMount() {
-    this.retrieve()
+    this.retrieve(true)
   }
 
-  retrieve = () => {
+  retrieve = (flag) => {
     const { user } = this.props.state;
     if(user === null || user.sub_account == null || user.sub_account.merchant == null) {
       return
@@ -53,34 +60,73 @@ class OrderManagement extends Component {
         column: 'status'
       }],
       sort: {
-        status: 'desc'
+        created_at: 'desc'
       },
-      limit: 5,
-      offset: 0
+      limit: this.state.limit,
+      offset: flag == true && this.state.offset > 0 ? (this.state.offset * this.state.limit) : this.state.offset
     }
     
     this.setState({
       isLoading: true
     })
 
-    Api.request(Routes.checkoutRetrieveOrdersMerchant, parameter, response => {
-      this.setState({isLoading: false, data: response.data})
+    Api.request(Routes.checkoutRetrieveOrdersMerchantMobile, parameter, response => {
+      this.setState({isLoading: false})
+      if(response.data.length > 0){
+        this.setState({
+          data: flag == false ? response.data : _.uniqBy([...this.state.data, ...response.data], 'id'),
+          numberOfPages: parseInt(response.size / this.state.limit) + (response.size % this.state.limit ? 1 : 0),
+          offset: flag == false ? 1 : (this.state.offset + 1)
+        })
+      }else{
+        this.setState({
+          data: flag == false ? [] : this.state.data,
+          numberOfPages: null,
+          offset: flag == false ? 0 : this.state.offset
+        })
+      }
     },error => {
       this.setState({isLoading: false, data: []})
     });
   }
 
   showOptions(data){
-    const { selected } = this.state;
-    if(selected){
+    const { selected, checkout } = this.state;
+    if(selected || checkout){
       this.setState({
-        selected: null
+        selected: null,
+        checkout: null
       })
     }else{
       this.setState({
         selected: data
       })
+      this.retrieveItem(data)
     }
+  }
+
+  retrieveItem = (data) => {
+    if(data == null) {
+      return
+    }
+    let parameter = {
+      condition: [{
+        value: data.id,
+        clause: '=',
+        column: 'id'
+      }]
+    }
+
+    this.setState({
+      isLoading: true
+    })
+
+    Api.request(Routes.checkoutRetrieveOrdersMerchant, parameter, response => {
+      console.log('checkout', response.data)
+      this.setState({isLoading: false, checkout: response.data[0]})
+    },error => {
+      this.setState({isLoading: false, checkout: null})
+    });
   }
 
   goToMessenger(data) {
@@ -96,8 +142,27 @@ class OrderManagement extends Component {
     });
   }
 
+  submitRatings(data, type){
+    let rating = {
+      payload: type,
+      payload_value: type == 'rider' ? data.assigned_rider.id : data.account_id,
+      payload1: 'checkout',
+      payload_value1: data.id
+    }
+    this.setState({
+      ratingModal: true,
+      ratingData: rating
+    })
+  }
+
+  viewOrder(params){
+    const { setOrder } = this.props;
+    setOrder(params)
+    this.props.navigation.navigate('mapStack');
+  }
+
   options(){
-    const { selected } = this.state;
+    const { checkout } = this.state;
     Animated.spring(
       this.state.bounceValue,
       {
@@ -134,9 +199,9 @@ class OrderManagement extends Component {
               fontWeight: 'bold',
               width: '80%'
             }}>
-              Order #: {selected.order_number}
+              Order #: {checkout.order_number}
             </Text>
-            <TouchableOpacity 
+            <TouchableHighlight 
               style={{
                 width: '20%',
                 alignItems: 'flex-end',
@@ -144,26 +209,35 @@ class OrderManagement extends Component {
               }}
               onPress={() => {
                 this.setState({
-                  selected: null
+                  selected: null,
+                  checkout: null
                 })
               }}
+              underlayColor={Color.gray}
               >
               <FontAwesomeIcon
                 icon={faTimes}
               />
-            </TouchableOpacity>
+            </TouchableHighlight>
           </View>
 
           {
-            selected.status == 'pending' && (
-              <TouchableOpacity style={{
+            checkout.status == 'pending' && (
+              <TouchableHighlight style={{
                 paddingTop: 20,
                 paddingBottom: 20,
                 paddingLeft: 10,
                 paddingRight: 10,
                 borderBottomColor: Color.lightGray,
                 borderBottomWidth: 1
-              }}>
+              }}
+              onPress={() => {
+                this.setState({
+                  selected: null
+                })
+              }}
+              underlayColor={Color.gray}
+              >
                 <View style={{
                   flexDirection: 'row'
                 }}>
@@ -177,11 +251,11 @@ class OrderManagement extends Component {
                     <FontAwesomeIcon icon={faCheck}  />
                   </Text>
                 </View>
-              </TouchableOpacity>
+              </TouchableHighlight>
             )
           }
 
-          <TouchableOpacity style={{
+          <TouchableHighlight style={{
             paddingTop: 20,
             paddingBottom: 20,
             paddingLeft: 10,
@@ -190,8 +264,9 @@ class OrderManagement extends Component {
             borderBottomWidth: 1
           }}
           onPress={() => {
-            this.goToMessenger(selected)
+            this.goToMessenger(checkout)
           }}
+          underlayColor={Color.gray}
           >
             <View style={{
               flexDirection: 'row'
@@ -206,16 +281,21 @@ class OrderManagement extends Component {
                 <FontAwesomeIcon icon={faComment}  />
               </Text>
             </View>
-          </TouchableOpacity>
+          </TouchableHighlight>
 
-          <TouchableOpacity style={{
+          <TouchableHighlight style={{
             paddingTop: 20,
             paddingBottom: 20,
             paddingLeft: 10,
             paddingRight: 10,
             borderBottomColor: Color.lightGray,
             borderBottomWidth: 1
-          }}>
+          }}
+          onPress={() => {
+            this.goToMessenger(checkout)
+          }}
+          underlayColor={Color.gray}
+          >
             <View style={{
               flexDirection: 'row'
             }}>
@@ -229,19 +309,24 @@ class OrderManagement extends Component {
                 <FontAwesomeIcon icon={faEye}  />
               </Text>
             </View>
-          </TouchableOpacity>
+          </TouchableHighlight>
 
 
           {
-            (selected.status == 'pending' && item.assigned_rider == null && item.scope_location != null) && (
-              <TouchableOpacity style={{
+            (checkout.status == 'pending' && checkout.assigned_rider == null && checkout.scope_location != null) && (
+              <TouchableHighlight style={{
                 paddingTop: 20,
                 paddingBottom: 20,
                 paddingLeft: 10,
                 paddingRight: 10,
                 borderBottomColor: Color.lightGray,
                 borderBottomWidth: 1
-              }}>
+              }}
+              onPress={() => {
+                this.goToMessenger(checkout)
+              }}
+              underlayColor={Color.gray}
+              >
                 <View style={{
                   flexDirection: 'row'
                 }}>
@@ -255,20 +340,25 @@ class OrderManagement extends Component {
                     <FontAwesomeIcon icon={faBiking}  />
                   </Text>
                 </View>
-              </TouchableOpacity>
+              </TouchableHighlight>
             )
           }
 
           {
-            selected.status != 'completed' && (
-              <TouchableOpacity style={{
+            checkout.status != 'completed' && (
+              <TouchableHighlight style={{
                 paddingTop: 20,
                 paddingBottom: 20,
                 paddingLeft: 10,
                 paddingRight: 10,
                 borderBottomColor: Color.lightGray,
                 borderBottomWidth: 1
-              }}>
+              }}
+              onPress={() => {
+                this.viewOrder(checkout)
+              }}
+              underlayColor={Color.gray}
+              >
                 <View style={{
                   flexDirection: 'row'
                 }}>
@@ -282,56 +372,74 @@ class OrderManagement extends Component {
                     <FontAwesomeIcon icon={faMapMarkerAlt}  />
                   </Text>
                 </View>
-              </TouchableOpacity>
+              </TouchableHighlight>
             )
           }
           
 
-          <TouchableOpacity style={{
-            paddingTop: 20,
-            paddingBottom: 20,
-            paddingLeft: 10,
-            paddingRight: 10,
-            borderBottomColor: Color.lightGray,
-            borderBottomWidth: 1
-          }}>
-            <View style={{
-              flexDirection: 'row'
-            }}>
-              <Text style={{
-                width: '80%'
-              }}>Rate Customer</Text>
-              <Text style={{
-                  width: '20%',
-                  textAlign: 'right'
+          {
+            (checkout.customer_rating == null && (checkout.status == 'completed' || checkout.status == 'cancelled')) && (
+              <TouchableHighlight style={{
+                paddingTop: 20,
+                paddingBottom: 20,
+                paddingLeft: 10,
+                paddingRight: 10,
+                borderBottomColor: Color.lightGray,
+                borderBottomWidth: 1
+              }}
+                onPress={() => {
+                  this.submitRatings(checkout, 'customer')
+                }}
+                underlayColor={Color.gray}
+                >
+                <View style={{
+                  flexDirection: 'row'
                 }}>
-                <FontAwesomeIcon icon={faStar}  />
-              </Text>
-            </View>
-          </TouchableOpacity>
+                  <Text style={{
+                    width: '80%'
+                  }}>Rate Customer</Text>
+                  <Text style={{
+                      width: '20%',
+                      textAlign: 'right'
+                    }}>
+                    <FontAwesomeIcon icon={faStar}  />
+                  </Text>
+                </View>
+              </TouchableHighlight>
+            )
+          }
 
-          <TouchableOpacity style={{
-            paddingTop: 20,
-            paddingBottom: 20,
-            paddingLeft: 10,
-            paddingRight: 10,
-            borderBottomColor: Color.lightGray,
-            borderBottomWidth: 1
-          }}>
-            <View style={{
-              flexDirection: 'row'
-            }}>
-              <Text style={{
-                width: '80%'
-              }}>Rate Rider</Text>
-              <Text style={{
-                  width: '20%',
-                  textAlign: 'right'
+          {
+            (checkout.rider_rating == null && checkout.assigned_rider != null && (checkout.status == 'completed' || checkout.status == 'cancelled')) && (
+              <TouchableHighlight style={{
+                paddingTop: 20,
+                paddingBottom: 20,
+                paddingLeft: 10,
+                paddingRight: 10,
+                borderBottomColor: Color.lightGray,
+                borderBottomWidth: 1
+              }}
+              onPress={() => {
+                this.submitRatings(checkout, 'rider')
+              }}
+              underlayColor={Color.gray}
+              >
+                <View style={{
+                  flexDirection: 'row'
                 }}>
-                <FontAwesomeIcon icon={faStar}  />
-              </Text>
-            </View>
-          </TouchableOpacity>
+                  <Text style={{
+                    width: '80%'
+                  }}>Rate Rider</Text>
+                  <Text style={{
+                      width: '20%',
+                      textAlign: 'right'
+                    }}>
+                    <FontAwesomeIcon icon={faStar}  />
+                  </Text>
+                </View>
+              </TouchableHighlight>
+            )
+          }
 
         </ScrollView>
       </Animated.View>
@@ -340,10 +448,27 @@ class OrderManagement extends Component {
 
   render() {
     const { user, theme } = this.props.state
-    const { isLoading, data,selected } = this.state
+    const { isLoading, data,selected, ratingData, ratingModal, checkout } = this.state
     return (
       <View style={Style.MainContainer}>
-        <ScrollView style={Style.ScrollView} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={Style.ScrollView}
+          showsVerticalScrollIndicator={false}
+          onScroll={(event) => {
+            let scrollingHeight = event.nativeEvent.layoutMeasurement.height + event.nativeEvent.contentOffset.y
+            let totalHeight = event.nativeEvent.contentSize.height - 20
+            if(event.nativeEvent.contentOffset.y <= 0) {
+              if(isLoading == false){
+                this.retrieve(false)
+              }
+            }
+            if(scrollingHeight >= (totalHeight + 10)) {
+              if(isLoading == false){
+                this.retrieve(true)
+              }
+            }
+          }}
+          >
           { isLoading ? <Spinner mode="overlay"/> : null }
           <View style={[Style.MainContainer, {
             minHeight: height
@@ -367,6 +492,7 @@ class OrderManagement extends Component {
                   data.map((order, idx) => (
                     <OrderManagementCard
                       key={idx}
+                      length={data.length - 1}
                       data={order}
                       onClick={(data) => this.showOptions(data)}
                     />
@@ -377,10 +503,29 @@ class OrderManagement extends Component {
           </View>
         </ScrollView>
         {
-          selected && (
+          checkout && (
             this.options()
           )
         }
+        {
+            (ratingModal && ratingData) && (
+              <CreateRatings data={ratingData} 
+              visible={ratingModal}
+              action={(flag) => {
+                this.setState({
+                  ratingModal: flag,
+                  ratingData: null
+                })
+                this.retrieveItem(selected)
+              }}
+              title={'RATE ' + ratingData.payload.toUpperCase()}
+              actionLabel={{
+                no: 'Cancel',
+                yes: 'Submit'
+              }}
+              />
+            )
+          }
       </View>
     )
   }
@@ -390,7 +535,9 @@ const mapStateToProps = state => ({state: state});
 
 const mapDispatchToProps = dispatch => {
   const {actions} = require('@redux');
-  return {};
+  return {
+    setOrder: (order) => dispatch(actions.setOrder(order))
+  };
 };
 
 export default connect(
