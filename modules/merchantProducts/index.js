@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, Image, TouchableHighlight, Text, ScrollView, FlatList, Dimensions, TouchableOpacity, ToastAndroid} from 'react-native';
+import {View, Image, TouchableHighlight, Text, ScrollView, FlatList, Dimensions, TouchableOpacity, ToastAndroid,Alert} from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Thumbnail, List, ListItem, Separator } from 'native-base';
 import { connect } from 'react-redux';
@@ -110,12 +110,39 @@ class MyDelivery extends Component {
       id:products[index].id,
       status:status,
     };
+    Alert.alert(
+      "Update Item",
+      "Are you sure to update Items Status?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => {return},
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => {  
+          this.setState({isLoading:true})
+          Api.request(Routes.productsUpdate, parameter, response => {
+            if(response.data==true)
+            {
+              Alert.alert(
+                "Item Status",
+                "Item Status was updated successfully",
+                [
+                  {
+                    text:"Ok",
+                    onPress:()=>{this.setState({isLoading:false})}
+                  }
+                ]
+              )
+            }
+          }, error => {
+          console.log('error', error)
+        });} }
+      ],
+      { cancelable: false }
+    );
     console.log(this.props.state)
-    Api.request(Routes.productsUpdate, parameter, response => {
-      alert(response.data)
-    }, error => {
-      console.log('error', error)
-    });
+  
   }
 
 
