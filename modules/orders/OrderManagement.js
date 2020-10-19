@@ -179,6 +179,11 @@ class OrderManagement extends Component {
 
   goToMessenger(data) {
     if (data.code == null) return
+    const { setOrder } = this.props;
+    setOrder({
+      ...data,
+      checkout_id: data.id
+    })
     this.props.navigation.navigate('MessengerMessages', { 
       checkoutData: {
         id: data.id,
