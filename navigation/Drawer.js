@@ -23,6 +23,8 @@ import Deposit from 'modules/deposit';
 import OrderManagement from 'modules/orders/OrderManagement.js';
 import { connect } from 'react-redux';
 import Ledger from 'modules/Ledger';
+import Products from 'modules/merchantProducts';
+
 
 class MenuDrawerContentStructure extends Component {
   constructor(props){
@@ -223,6 +225,18 @@ const StackNavigator = createStackNavigator({
       headerTintColor: Color.primary,
     }),
   },
+  Products: {
+    screen: Products,
+    navigationOptions: ({ navigation }) => ({
+      title: 'Products',
+      headerLeft: <MenuDrawerStructure navigationProps={navigation} />,
+      headerRight: <OptionRight navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: Color.white,
+      },
+      headerTintColor: Color.primary,
+    }),
+  },
 });
 
 const Drawer = createDrawerNavigator({
@@ -236,6 +250,12 @@ const Drawer = createDrawerNavigator({
     screen: StackNavigator,
     navigationOptions: {
       drawerLabel: 'My Orders',
+    },
+  },
+  Products: {
+    screen: StackNavigator,
+    navigationOptions: {
+      drawerLabel: 'Products',
     },
   },
   Dashboard: {

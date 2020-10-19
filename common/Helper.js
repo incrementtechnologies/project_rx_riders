@@ -49,6 +49,14 @@ export default {
     iconStyle: {
       color: Color.primary
     }
+  },
+  {
+    title: 'Products',
+    route: 'Products',
+    icon: faCreditCard,
+    iconStyle: {
+      color: Color.primary
+    }
   }
   ],
   DrawerMenuLogout: [],
