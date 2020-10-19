@@ -16,13 +16,15 @@ class HeaderOptions extends Component {
   
   back = () => {
     // this.props.navigationProps.navigate('drawerStack');
+    const { user } = this.props.state;
+    if(user == null) return
     const navigateAction = NavigationActions.navigate({
       routeName: 'drawerStack',
       action: StackActions.reset({
         index: 0,
         key: null,
         actions: [
-            NavigationActions.navigate({routeName: 'Delivery'}),
+            NavigationActions.navigate({routeName: user.account_type == 'MERCHANT' ? 'MyOrders' : 'Delivery'}),
         ]
       })
     });
@@ -41,12 +43,23 @@ class HeaderOptions extends Component {
   }
 }
 
+const mapStateToProps = state => ({ state: state });
+
+const mapDispatchToProps = dispatch => {
+  const { actions } = require('@redux');
+  return {
+    logout: () => dispatch(actions.logout())
+  };
+};
+
+let HeaderOptionsConnect = connect(mapStateToProps, mapDispatchToProps)(HeaderOptions);
+
 const MapStack = createStackNavigator({
   MapScreen: {
     screen: Page, 
     navigationOptions: ({ navigation }) => ({
       title: 'Map',
-      headerLeft: <HeaderOptions navigationProps={navigation} />,
+      headerLeft: <HeaderOptionsConnect navigationProps={navigation} />,
       drawerLabel: 'Map',
       headerStyle: {
         backgroundColor: 'transparent',
@@ -63,14 +76,6 @@ const MapStack = createStackNavigator({
   },
 })
 
-const mapStateToProps = state => ({ state: state });
-
-const mapDispatchToProps = dispatch => {
-  const { actions } = require('@redux');
-  return {
-    logout: () => dispatch(actions.logout())
-  };
-};
 
 export default connect(
   mapStateToProps,

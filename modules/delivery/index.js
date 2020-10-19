@@ -51,6 +51,10 @@ class Delivery extends Component {
     
     this.retrieve();
     console.log(this.props.state)
+    const { user } = this.props.state;
+    if(user.account_type == 'MERCHANT'){
+      return
+    }
     BackgroundGeolocation.configure({
       desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
       stationaryRadius: 50,
@@ -70,7 +74,6 @@ class Delivery extends Component {
     });
 
     BackgroundGeolocation.start(); //triggers start on start event
-
 
     BackgroundGeolocation.on('location', (location) => {
       this.setState({region:{
@@ -96,9 +99,6 @@ class Delivery extends Component {
     });
 
     BackgroundGeolocation.on('background', ()=>{console.log("Background")})
-    
-  
-    
   }
 
   componentWillUnmount=()=>
@@ -113,6 +113,7 @@ class Delivery extends Component {
       this.props.navigation.navigate('drawerStack');
       return
     }
+
     let parameter = {
       condition: [{
         value: order.checkout_id,
@@ -625,7 +626,7 @@ class Delivery extends Component {
   
   render() {
     const { data, ratingData, ratingModal } = this.state;
-    const { theme } = this.props.state;
+    const { theme, user } = this.props.state;
     return (
       <View style={Style.MainContainer}>
         <View style={{
@@ -635,8 +636,8 @@ class Delivery extends Component {
             style={Style.map}
             ref={(ref)=>this.mapView=ref}
             provider={PROVIDER_GOOGLE}
-            showsUserLocation={true}
-            followsUserLocation={true}
+            showsUserLocation={user && user.account_type == 'MERCHANT' ? false : true}
+            followsUserLocation={user && user.account_type == 'MERCHANT' ? false : true}
             onUserLocationChange={(location)=>data!=null ? this.getDistance(location.nativeEvent.coordinate): console.log(location)}
             region={this.state.region}
             //onPress={()=>this.animate()}
@@ -657,7 +658,7 @@ class Delivery extends Component {
                   }}
                   title={data.merchant_location.route}
                 >    
-                <Image source={require('../../assets/merchantLocationMarker.png')} style={{ width: 50, height: 55 }} />
+                <Image source={require('src/assets/merchantLocationMarker.png')} style={{ width: 50, height: 55 }} />
                 </Marker>    
                        
               )
@@ -680,7 +681,28 @@ class Delivery extends Component {
                   }}
                   title={data.location.route}
                 >              
-                <Image source={require('../../assets/userPositionMarker.png')} style={{ width: 50, height: 55 }} />
+                <Image source={require('src/assets/userPositionMarker.png')} style={{ width: 50, height: 55 }} />
+                </Marker>   
+              )
+            }
+
+            {
+              (data != null && data.rider_location != null) && (
+                <Marker
+                  coordinate={{
+                    longitude: parseFloat(data.rider_location.longitude),
+                    latitude: parseFloat(data.rider_location.latitude),
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                  }}
+                  draggable
+                  pinColor={Color.primary}
+                  onDragEnd={(e) => {
+                    // this.manageOnDragEnd(e)
+                  }}
+                  title={data.rider_location.route}
+                >              
+                <Image source={require('src/assets/riderMarker.png')} style={{ width: 50, height: 55 }} />
                 </Marker>   
               )
             }

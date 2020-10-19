@@ -129,6 +129,52 @@ class OrderManagement extends Component {
     });
   }
 
+  acceptOrders = (data) => {
+    if(data == null) {
+      return
+    }
+    let parameter = {
+      id: data.id,
+      status: 'accepted'
+    }
+
+    this.setState({
+      isLoading: true
+    })
+
+    Api.request(Routes.checkoutUpdate, parameter, response => {
+      this.retrieveItem(data)
+    },error => {
+      this.setState({isLoading: false})
+    });
+  }
+
+  searchRider = (data) => {
+    const { user } = this.props.state;
+
+    if(data == null || user == null) {
+      return
+    }
+    
+    let parameter = {
+      merchant: user.sub_account.merchant.code,
+      checkout_id: data.id,
+      scope: user.scope_location
+    }
+
+    this.setState({
+      isLoading: true
+    })
+
+    Api.request(Routes.broadcastRiderSearch, parameter, response => {
+      this.setState({
+        isLoading: false
+      })
+    },error => {
+    });
+
+  }
+
   goToMessenger(data) {
     if (data.code == null) return
     this.props.navigation.navigate('MessengerMessages', { 
@@ -143,6 +189,12 @@ class OrderManagement extends Component {
   }
 
   submitRatings(data, type){
+    const { setOrder } = this.props;
+    setOrder({
+      ...params,
+      checkout_id: params.id
+    })
+    this.props.navigation.navigate('mapStack');
     let rating = {
       payload: type,
       payload_value: type == 'rider' ? data.assigned_rider.id : data.account_id,
@@ -157,12 +209,16 @@ class OrderManagement extends Component {
 
   viewOrder(params){
     const { setOrder } = this.props;
-    setOrder(params)
+    setOrder({
+      ...params,
+      checkout_id: params.id
+    })
     this.props.navigation.navigate('mapStack');
   }
 
   options(){
     const { checkout } = this.state;
+    const { user } = this.props.state;
     Animated.spring(
       this.state.bounceValue,
       {
@@ -232,9 +288,7 @@ class OrderManagement extends Component {
                 borderBottomWidth: 1
               }}
               onPress={() => {
-                this.setState({
-                  selected: null
-                })
+                this.acceptOrders(checkout)
               }}
               underlayColor={Color.gray}
               >
@@ -313,7 +367,7 @@ class OrderManagement extends Component {
 
 
           {
-            (checkout.status == 'pending' && checkout.assigned_rider == null && checkout.scope_location != null) && (
+            (checkout.status == 'pending' && checkout.assigned_rider == null && user && user.scope_location != null) && (
               <TouchableHighlight style={{
                 paddingTop: 20,
                 paddingBottom: 20,
@@ -323,7 +377,7 @@ class OrderManagement extends Component {
                 borderBottomWidth: 1
               }}
               onPress={() => {
-                this.goToMessenger(checkout)
+                this.searchRider(checkout)
               }}
               underlayColor={Color.gray}
               >

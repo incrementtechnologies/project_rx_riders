@@ -74,8 +74,7 @@ class OrderManagementCard extends Component {
             </Text>
             <View style={{
               flexDirection: 'row',
-              paddingTop: 10,
-              paddingBottom: 10
+              paddingTop: 10
             }}>
             <Text style={{
               width: '50%',

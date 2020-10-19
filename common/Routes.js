@@ -33,6 +33,7 @@ export default {
   checkoutRetrieveOrdersMerchant: apiUrl + 'checkouts/retrieve_orders',
   checkoutRetrieveOrdersMerchantMobile: apiUrl + 'checkouts/retrieve_orders_mobile',
   checkoutRetrieveByRider: apiUrl + 'checkouts/retrieve_by_rider',
+  checkoutUpdate: apiUrl + 'checkouts/update',
   // Deliveries
   deliveryCreate: apiUrl + 'deliveries/create',
   deliveryRetrieve: apiUrl + 'deliveries/retrieve',
@@ -43,12 +44,11 @@ export default {
   deliveryUpdate: apiUrl + 'deliveries/update',
   // Merchants
   merchantsRetrieve: apiUrl + 'merchants/retrieve',
-  //Checkout
   ledgerSummary: apiUrl+ 'ledger/summary',
   ledgerHistory: apiUrl + 'ledger/history',
-  checkoutUpdate: apiUrl + 'checkouts/update',
   filters:apiUrl + 'dashboard/categories',
   locationSharing:apiUrl + 'broadcasts/location_sharing',
+  broadcastRiderSearch:apiUrl + 'riders/search',
   distanceRetrieve:apiUrl + 'locations/get_distance',
   //Deposits
   depositCreate: apiUrl + 'deposits/create',
