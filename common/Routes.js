@@ -55,6 +55,7 @@ export default {
   depositCreate: apiUrl + 'deposits/create',
   depositRetrieve: apiUrl + 'deposits/retrieve',
   // messenger
+  customMessengerGroupCreate: apiUrl + 'custom_messenger_groups/create',
   messengerCreateForRider: apiUrl + 'custom_messenger_groups/custom_create',
   messengerGroupRetrieve: apiUrl + 'messenger_groups/retrieve',
   messengerGroupRetrieveByParams: apiUrl + 'messenger_groups/retrieve_by_params',

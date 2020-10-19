@@ -21,6 +21,7 @@ import Referral from 'modules/referral';
 import NewDelivery from 'modules/newDelivery';
 import Deposit from 'modules/deposit';
 import OrderManagement from 'modules/orders/OrderManagement.js';
+import MessengerMessages from 'components/Messenger/MessagesV2';
 import { connect } from 'react-redux';
 import Ledger from 'modules/Ledger';
 import Products from 'modules/merchantProducts';
@@ -223,6 +224,13 @@ const StackNavigator = createStackNavigator({
         backgroundColor: Color.white,
       },
       headerTintColor: Color.primary,
+    }),
+  },
+  MessengerMessages: {
+    screen: MessengerMessages,
+    navigationOptions: ({ navigation }) => ({
+      title: navigation.getParam('messengerHeaderTitle'),
+      headerTintColor: '#000'
     }),
   },
   Products: {
