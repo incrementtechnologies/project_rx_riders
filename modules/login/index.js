@@ -243,7 +243,9 @@ class Login extends Component {
         this.playAudio()
       }
     } else if(response.type == Helper.pusher.rider) {
+      const { user } = this.props.state;
       if (response.data.hasOwnProperty('assigned_rider')) return
+      if(user && user.account_type === 'MERCHANT') return
       if (response.data.scope !== user.scope_location) return
       if (appState === 'active') {
         Alert.alert(

@@ -6,7 +6,8 @@ import {
   Button,
   Dimensions,
   Animated,
-  TouchableHighlight
+  TouchableHighlight,
+  ActivityIndicator
 } from 'react-native';
 import { NavigationActions } from 'react-navigation'
 import { connect } from 'react-redux';
@@ -38,7 +39,8 @@ class OrderManagement extends Component {
       limit: 5,
       offset: 0,
       numberOfPages: null,
-      isViewItem: false
+      isViewItem: false,
+      isBroadcasting: false
     }
   }
 
@@ -141,13 +143,13 @@ class OrderManagement extends Component {
     }
 
     this.setState({
-      isLoading: true
+      isBroadcasting: true
     })
 
     Api.request(Routes.checkoutUpdate, parameter, response => {
       this.retrieveItem(data)
     },error => {
-      this.setState({isLoading: false})
+      this.setState({isBroadcasting: false})
     });
   }
 
@@ -165,14 +167,17 @@ class OrderManagement extends Component {
     }
 
     this.setState({
-      isLoading: true
+      isBroadcasting: true
     })
 
     Api.request(Routes.broadcastRiderSearch, parameter, response => {
       this.setState({
-        isLoading: false
+        isBroadcasting: false
       })
     },error => {
+      this.setState({
+        isBroadcasting: false
+      })
     });
 
   }
@@ -512,9 +517,14 @@ class OrderManagement extends Component {
   render() {
     const { user, theme } = this.props.state
     const { isLoading, data,selected, ratingData, ratingModal, checkout } = this.state
-    const { isViewItem } = this.state;
+    const { isViewItem, isBroadcasting } = this.state;
     return (
       <View style={Style.MainContainer}>
+        {
+          isBroadcasting && (
+            <ActivityIndicator size="large" color={Color.primary} />
+          )
+        }
         <ScrollView
           style={Style.ScrollView}
           showsVerticalScrollIndicator={false}
@@ -599,6 +609,7 @@ class OrderManagement extends Component {
               />
             )
           }
+          
       </View>
     )
   }
