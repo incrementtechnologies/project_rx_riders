@@ -73,7 +73,13 @@ class Deposit extends Component {
   }
 
   redirect(item){
-
+    this.props.navigation.navigate('MessengerMessages', { 
+      depositData: {
+        id: item.id,
+        code: item.code,
+      },
+      messengerHeaderTitle: `***${item.code.slice(-8)}`
+    });
   }
 
   createDeposit = () => {
