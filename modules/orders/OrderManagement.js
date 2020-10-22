@@ -509,6 +509,33 @@ class OrderManagement extends Component {
             )
           }
 
+         <TouchableHighlight style={{
+            paddingTop: 20,
+            paddingBottom: 20,
+            paddingLeft: 10,
+            paddingRight: 10
+          }}
+          onPress={() => {
+            this.submitRatings(checkout, 'rider')
+          }}
+          underlayColor={Color.gray}
+          >
+            <View style={{
+              flexDirection: 'row'
+            }}>
+              <Text style={{
+                width: '80%',
+                color: Color.danger
+              }}>Close</Text>
+              <Text style={{
+                  width: '20%',
+                  textAlign: 'right'
+                }}>
+                <FontAwesomeIcon icon={faStar}  />
+              </Text>
+            </View>
+          </TouchableHighlight>
+
         </ScrollView>
       </Animated.View>
     );
