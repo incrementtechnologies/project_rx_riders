@@ -25,7 +25,7 @@ import MessengerMessages from 'components/Messenger/MessagesV2';
 import { connect } from 'react-redux';
 import Ledger from 'modules/Ledger';
 import Products from 'modules/merchantProducts';
-import addressMap from 'modules/addressMap';
+import addressMapScreen from 'modules/addressMap';
 import Page from 'modules/delivery';
 import DeliveryHeaderOptions from 'modules/delivery/Drawer.js';
 import HeaderOptions from 'modules/addressMap/Drawer.js';
@@ -249,8 +249,8 @@ const StackNavigator = createStackNavigator({
       headerTintColor: Color.primary,
     }),
   },
-  addressMapScreen: {
-    screen: addressMap, 
+  addressMap: {
+    screen: addressMapScreen, 
     navigationOptions: ({ navigation }) => ({
       title: 'Select Address',
       headerLeft: <HeaderOptions navigationProps={navigation} />,
