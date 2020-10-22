@@ -3,7 +3,6 @@ import { View, TouchableOpacity, Text } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
-import Page from 'modules/delivery';
 import {NavigationActions, StackActions} from 'react-navigation';
 import { Color, BasicStyles } from 'common';
 import { connect } from 'react-redux';
@@ -51,25 +50,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-let HeaderOptionsConnect = connect(mapStateToProps, mapDispatchToProps)(HeaderOptions);
-
-const MapStack = createStackNavigator({
-  MapScreen: {
-    screen: Page, 
-    navigationOptions: ({ navigation }) => ({
-      title: 'Map',
-      headerLeft: <HeaderOptionsConnect navigationProps={navigation} />,
-      drawerLabel: 'Map',
-      headerStyle: {
-        backgroundColor: 'transparent',
-      },
-      headerTransparent: true
-    })
-  }
-})
-
-
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(MapStack);
+)(HeaderOptions);
