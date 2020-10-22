@@ -8,9 +8,7 @@ import NotificationStack from 'modules/notification/Drawer.js';
 import selectLocationStack from 'modules/selectLocation/Drawer.js';
 import selectFilterStack from 'modules/FilterPicker/Drawer.js';
 import CartStack from 'modules/productCheckout/Drawer.js';
-import addressMapStack from 'modules/addressMap/Drawer.js';
 import paymentOptionStack from 'modules/paymentOptions/Drawer.js'
-import MapStack from 'modules/delivery/Drawer.js';
 import CreateDepositStack from 'modules/deposit/Create.js';
 
 
@@ -53,9 +51,7 @@ const PrimaryNav = createStackNavigator({
   filterPicker:{screen:selectFilterStack},
   notificationStack: { screen: NotificationStack},
   Cart:{screen:CartStack},
-  addressMap:{screen:addressMapStack},
   paymentOptions:{screen:paymentOptionStack},
-  mapStack: { screen: MapStack},
   createDepositStack: { screen: CreateDepositStack}
 }, {
   // Default config for all screens

@@ -25,6 +25,10 @@ import MessengerMessages from 'components/Messenger/MessagesV2';
 import { connect } from 'react-redux';
 import Ledger from 'modules/Ledger';
 import Products from 'modules/merchantProducts';
+import addressMap from 'modules/addressMap';
+import Page from 'modules/delivery';
+import DeliveryHeaderOptions from 'modules/delivery/Drawer.js';
+import HeaderOptions from 'modules/addressMap/Drawer.js';
 
 
 class MenuDrawerContentStructure extends Component {
@@ -245,6 +249,30 @@ const StackNavigator = createStackNavigator({
       headerTintColor: Color.primary,
     }),
   },
+  addressMapScreen: {
+    screen: addressMap, 
+    navigationOptions: ({ navigation }) => ({
+      title: 'Select Address',
+      headerLeft: <HeaderOptions navigationProps={navigation} />,
+      drawerLabel: 'Select Address',
+      headerStyle: {
+        backgroundColor: Color.primary,
+      },
+      headerTintColor: '#fff',
+    })
+  },
+  mapStack: {
+    screen: Page, 
+    navigationOptions: ({ navigation }) => ({
+      title: 'Map',
+      headerLeft: <DeliveryHeaderOptions navigationProps={navigation} />,
+      drawerLabel: 'Map',
+      headerStyle: {
+        backgroundColor: 'transparent',
+      },
+      headerTransparent: true
+    })
+  }
 });
 
 const Drawer = createDrawerNavigator({
@@ -318,6 +346,18 @@ const Drawer = createDrawerNavigator({
     screen: StackNavigator,
     navigationOptions: {
       drawerLabel: 'My Deposits',
+    },
+  },
+  addressMap: {
+    screen: StackNavigator,
+    navigationOptions: {
+      drawerLabel: '',
+    },
+  },
+  mapStack: {
+    screen: StackNavigator,
+    navigationOptions: {
+      drawerLabel: '',
     },
   },
 }, {
