@@ -539,7 +539,7 @@ class CreateStack extends Component {
               onSelect={(url) => {
                 this.addImageToFiles(url)
               }}
-              onCLose={() => {
+              onClose={() => {
                 this.setState({
                   imageModal: false
                 })
