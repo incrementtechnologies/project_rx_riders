@@ -285,6 +285,7 @@ class OrderManagement extends Component {
               >
               <FontAwesomeIcon
                 icon={faTimes}
+                color={Color.danger}
               />
             </TouchableHighlight>
           </View>
@@ -531,7 +532,7 @@ class OrderManagement extends Component {
                   width: '20%',
                   textAlign: 'right'
                 }}>
-                <FontAwesomeIcon icon={faStar}  />
+                <FontAwesomeIcon icon={faTimes}  color={Color.danger}/>
               </Text>
             </View>
           </TouchableHighlight>
