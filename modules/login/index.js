@@ -26,6 +26,7 @@ import SystemVersion from 'services/System.js';
 import { Player } from '@react-native-community/audio-toolkit';
 import OtpModal from 'components/Modal/Otp.js';
 import { Notifications } from 'react-native-notifications';
+import FingerprintScanner from 'react-native-fingerprint-scanner';
 
 const MAX_BACKGROUND_SESSION_IN_MINUTES = 60
 
@@ -94,6 +95,9 @@ class Login extends Component {
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
+    if (Platform.OS === 'android') {
+      FingerprintScanner.release();
+    }
   }
 
   _handleAppStateChange = appState => {
@@ -384,11 +388,46 @@ class Login extends Component {
   }
 
   getData = async () => {
+    const { user } = this.props.state
+    if (user != null) return
+
     try {
       const token = await AsyncStorage.getItem(Helper.APP_NAME + 'token');
-      if(token != null) {
-        this.setState({token});
-        this.login();
+      if (token != null) {
+        if (Platform.OS === 'ios') {
+          console.log('USES FP SCANNER FOR IOS')
+          FingerprintScanner
+          .isSensorAvailable()
+          .then(res => {
+            console.log({ isSensorAvailableRes: res })
+            FingerprintScanner
+            .authenticate({ description: 'Scan your fingerprint to continue', fallbackEnabled: false })
+            .then(() => {
+              this.setState({ token });
+              this.login();
+            })
+            .catch((err) => {
+              console.log({ fingerprintAuthErr: err })
+            })
+          })
+          .catch(err => console.log({ isSensorAvailableError: err }))
+        } else {
+          console.log('USES FP SCANNER FOR ANDROID')
+          FingerprintScanner
+          .isSensorAvailable()
+          .then(res => {
+            console.log({ isSensorAvailableRes: res })
+            FingerprintScanner.authenticate({ title: 'Authentication', subTitle: 'Scan your fingerprint to continue' })
+            .then(() => {
+              this.setState({ token });
+              this.login();
+            })
+            .catch((err) => {
+              console.log({ fingerprintAuthErr: err })
+            })
+          })
+          .catch(err => console.log({ isSensorAvailableError: err }))
+        }
       }
     } catch(e) {
       // error reading value
