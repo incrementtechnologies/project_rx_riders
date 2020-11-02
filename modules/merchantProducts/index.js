@@ -4,7 +4,7 @@ import { NavigationActions } from 'react-navigation';
 import { Thumbnail, List, ListItem, Separator } from 'native-base';
 import { connect } from 'react-redux';
 import { Empty } from 'components';
-import { faMapMarker, faPhoneAlt,faImage,faCartArrowDown,faCartPlus } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarker, faPhoneAlt,faImage,faCartArrowDown,faCartPlus, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import Style from './Style.js';
 import { Routes, Color, Helper, BasicStyles } from 'common';
@@ -25,7 +25,8 @@ class MyDelivery extends Component {
       isLoading: false,
       selected: null,
       offset: 0,
-      limit: 5
+      limit: 5,
+      variationBoxShowID:null,
     } 
   }
 
@@ -94,6 +95,12 @@ class MyDelivery extends Component {
     });
   }
 
+  ShowHideVariation = (id) =>{
+    this.setState({
+       variationBoxShowID : id===this.state.variationBoxShowID?null:id
+    })
+ }
+
   viewOrder(params){
     const { setOrder } = this.props;
     setOrder(params)
@@ -143,6 +150,55 @@ class MyDelivery extends Component {
     );
     console.log(this.props.state)
   
+  }
+
+  updateVariation=(index,status,variation)=>{
+    const products=[...this.state.data];
+    const productIndex=products.findIndex(product=>{
+      if(product.variation!=null && product.variation[index]!=null)
+      {
+        return product.variation[index].id==variation.id
+      }
+    })
+
+    products[productIndex].variation[index].status=status;
+
+    console.log(`${products[productIndex].title}${products[productIndex].variation[index].payload_value}${products[productIndex].variation[index].status}`)
+    
+    this.setState({data:products})
+   
+
+    
+    let parameters= {
+      id:variation.id,
+      status:status,
+      }
+
+    Api.request(Routes.variationsUpdate, parameters, response => {
+      console.log(response)
+        if(response.data==true)
+        {
+          Alert.alert(
+            "Item Status",
+            "Item Status was updated successfully",
+            [
+              {
+                text:"Ok",
+                onPress:()=>{this.setState({isLoading:false})}
+              }
+            ]
+          )
+        }
+      }, error => {
+      console.log('error', error)
+    })
+    
+    
+  
+    // console.log(variation)
+    // console.log(item)
+
+
   }
 
 
@@ -226,7 +282,7 @@ class MyDelivery extends Component {
                            {item.status.charAt(0).toUpperCase()+item.status.slice(1)}
                             </Text>
                           </View>
-                          <View style={{flexDirection:"row"}}>
+                          <View style={{flexDirection:"row",justifyContent:'space-between'}}>
                           <TouchableOpacity style={{
                             backgroundColor: item.status != 'completed' ? Color.danger : Color.gray,
                             borderRadius: 5,
@@ -251,10 +307,105 @@ class MyDelivery extends Component {
                              </React.Fragment> }
             
                           </TouchableOpacity>
+                          {
+                            item.variation && 
+                            <TouchableOpacity style={{paddingTop:15}}onPress={()=>{this.ShowHideVariation(item.id)}}>
+                             <FontAwesomeIcon icon={faChevronDown} size={25} style={[Style.image, {color: '#ccc',alignSelf:'center',marginRight:3}]} />
+                             </TouchableOpacity>
+                          }
                         </View>
-
+                      
+                   
                         </View>
+                        {item.variation!=null && this.state.variationBoxShowID===item.id? (
+                          <View style={{  marginTop:3,borderTopColor: Color.lightGray,
+                            borderTopWidth: 1}}>
+                          {/*                 FLAT LIST FOR VARIATIONS                */}
+                               <FlatList
+                               data={item.variation}
+                               extraData={this.state.selected}
+                               ItemSeparatorComponent={this.FlatListItemSeparator}
+                               renderItem={({ item, index }) => (
+                                 
+                                <View
+                       
+                                style={{
+                                  width: '100%',
+                                  paddingTop: 10,
+                                  paddingBottom: 10,
+                                  paddingLeft: 20,
+                                  paddingRight: 20,
+                                  borderBottomColor: Color.lightGray,
+                                  borderBottomWidth: 1
+                                }}
+                                >
+                                
+                                <View style={[Style.TextContainer, {
+                                }]}>
+                                  <View style={{
+                                    flexDirection: 'row',
+                                   
+                                    width: '100%'
+                                  }}>
+                               
+                                
+                                    <Text style={[BasicStyles.normalFontSize, {
+                                      width: '50%',
+                                      fontWeight:'bold'      
+                                    }]}>
+                                   {item.payload_value}
+                                    </Text>
+        
+                                    <Text style={[BasicStyles.normalFontSize, {
+                                    
+                                      width: '50%',
+                                     color: item.status != 'outOfStock' ? Color.primary : Color.danger,
+                                      fontWeight: 'bold',
+                                      textAlign: 'right'
+                                    }]}>
+                                   {item.status.charAt(0).toUpperCase()+item.status.slice(1)}
+                                    </Text>
+                                  </View>
+                                  <View style={{flexDirection:"row",justifyContent:'space-between'}}>
+                                  <TouchableOpacity style={{
+                                    backgroundColor: item.status != 'completed' ? Color.danger : Color.gray,
+                                    borderRadius: 5,
+                                    width: '35%',
+                                    marginTop:5,
+                                    height:35,
+                                    flexDirection:'row',
+                                    justifyContent:'center'
+                                  }}
+                                  onPress={()=> this.updateVariation(index,item.status=="outOfStock"?"published":"outOfStock",item)}
+                                  >
+                                   
+                                    {item.status!="outOfStock" ? 
+                                    <React.Fragment>
+                                    <FontAwesomeIcon icon={faCartArrowDown} size={15} style={[Style.image, {color: '#ccc',alignSelf:'center',marginRight:3}]} /> 
+                                    <Text style={{color:Color.white,textAlignVertical:'center'}}>Out Of Stock</Text>
+                                    </React.Fragment> 
+                                    :
+                                    <React.Fragment>
+                                     <FontAwesomeIcon icon={faCartPlus} size={15} style={[Style.image, {color: '#ccc',alignSelf:'center',marginRight:3}]} />
+                                     <Text style={{color:Color.white,marginLeft:10,textAlign:'center',textAlignVertical:'center'}}>Publish</Text>
+                                     </React.Fragment> }
+                    
+                                  </TouchableOpacity>
+                                <Text style={{paddingTop:10}}>{Currency.display(item.price, 'PHP')}</Text>
+                                </View>
+                              
+                           
+                                </View>
+                            
+                              </View>
+                           ////////////////////////////////////////FLAT LIST FOR VARIATIONS////////////////////////////
+                               )}
+                               keyExtractor={(item, index) => index.toString()}
+                             />
+                             </View>
+                        ) : null }
                       </View>
+                      
                   )}
                   keyExtractor={(item, index) => index.toString()}
                 />

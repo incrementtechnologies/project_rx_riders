@@ -60,5 +60,8 @@ export default {
   messengerMessagesUpdate: apiUrl + 'messenger_messages/update_by_status',
   // ratings
   ratingsCreate: apiUrl + 'ratings/create',
-  ratingsRetrieve: apiUrl + 'ratings/retrieve'
+  ratingsRetrieve: apiUrl + 'ratings/retrieve',
+
+  //Variations
+  variationsUpdate: apiUrl+ 'product_attributes/update'
 }
