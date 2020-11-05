@@ -104,6 +104,7 @@ const reducer = (state = initialState, action) => {
       AsyncStorage.clear();
       return Object.assign({}, initialState);
     case types.LOGIN:
+      storeData('username', user.username)
       storeData('token', token);
       console.log('LOGIN', true);
       Data.setToken(token)
