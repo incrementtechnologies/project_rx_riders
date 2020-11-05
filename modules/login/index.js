@@ -5,6 +5,7 @@ import {
   View,
   TextInput,
   TouchableHighlight,
+  TouchableOpacity,
   Text,
   ScrollView,
   Platform,
@@ -13,6 +14,11 @@ import {
 } from 'react-native';
 import {NavigationActions} from 'react-navigation';
 import moment from 'moment';
+import { Notifications } from 'react-native-notifications';
+import FingerprintScanner from 'react-native-fingerprint-scanner';
+import { Player } from '@react-native-community/audio-toolkit';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faFingerprint } from '@fortawesome/free-solid-svg-icons';
 import Style from './Style.js';
 import { Spinner } from 'components';
 import CustomError from 'components/Modal/Error.js';
@@ -23,10 +29,7 @@ import Header from '../basics/Header'
 import config from 'src/config';
 import Pusher from 'services/Pusher.js';
 import SystemVersion from 'services/System.js';
-import { Player } from '@react-native-community/audio-toolkit';
 import OtpModal from 'components/Modal/Otp.js';
-import { Notifications } from 'react-native-notifications';
-import FingerprintScanner from 'react-native-fingerprint-scanner';
 
 const MAX_BACKGROUND_SESSION_IN_MINUTES = 60
 
@@ -45,7 +48,8 @@ class Login extends Component {
       isOtpModal: false,
       blockedFlag: false,
       notifications: [],
-      appState: AppState.currentState
+      appState: AppState.currentState,
+      askAuth: false
     };
     this.bgTimestamp = null
     this.audio = null;
@@ -53,8 +57,10 @@ class Login extends Component {
   }
 
   async componentDidMount(){
+    this.setState({ askAuth: false })
     AppState.addEventListener('change', this._handleAppStateChange);
     this.getTheme()
+
     if(config.versionChecker == 'store'){
       this.setState({isLoading: true})
       SystemVersion.checkVersion(response => {
@@ -66,10 +72,17 @@ class Login extends Component {
     }else{
       this.getData(); 
     }
+
     this.audio = new Player('assets/notification.mp3');
     const initialNotification = await Notifications.getInitialNotification();
     if (initialNotification) {
       this.setState({notifications: [initialNotification, ...this.state.notifications]});
+    }
+  }
+
+  UNSAFE_componentWillReceiveProps(props) {
+    if (props.state.user == null && this.state.askAuth) {
+      this.setState({ askAuth: false, username: null, password: null })
     }
   }
 
@@ -393,44 +406,52 @@ class Login extends Component {
 
     try {
       const token = await AsyncStorage.getItem(Helper.APP_NAME + 'token');
-      if (token != null) {
-        if (Platform.OS === 'ios') {
-          console.log('USES FP SCANNER FOR IOS')
-          FingerprintScanner
-          .isSensorAvailable()
-          .then(res => {
-            console.log({ isSensorAvailableRes: res })
-            FingerprintScanner
-            .authenticate({ description: 'Scan your fingerprint to continue', fallbackEnabled: false })
-            .then(() => {
-              this.setState({ token });
-              this.login();
-            })
-            .catch((err) => {
-              console.log({ fingerprintAuthErr: err })
-            })
-          })
-          .catch(err => console.log({ isSensorAvailableError: err }))
-        } else {
-          console.log('USES FP SCANNER FOR ANDROID')
-          FingerprintScanner
-          .isSensorAvailable()
-          .then(res => {
-            console.log({ isSensorAvailableRes: res })
-            FingerprintScanner.authenticate({ title: 'Authentication', subTitle: 'Scan your fingerprint to continue' })
-            .then(() => {
-              this.setState({ token });
-              this.login();
-            })
-            .catch((err) => {
-              console.log({ fingerprintAuthErr: err })
-            })
-          })
-          .catch(err => console.log({ isSensorAvailableError: err }))
-        }
+      const username = await AsyncStorage.getItem(Helper.APP_NAME + 'username');
+      if (token != null && username != null) {
+        this.setState({ askAuth: true, username })
       }
     } catch(e) {
       // error reading value
+    }
+  }
+
+  askFingerprint = async () => {
+    const token = await AsyncStorage.getItem(Helper.APP_NAME + 'token');
+    if (token != null) {
+      if (Platform.OS === 'ios') {
+        console.log('USES FP SCANNER FOR IOS')
+        FingerprintScanner
+        .isSensorAvailable()
+        .then(res => {
+          console.log({ isSensorAvailableRes: res })
+          FingerprintScanner
+          .authenticate({ description: 'Scan your fingerprint to continue', fallbackEnabled: false })
+          .then(() => {
+            this.setState({ token });
+            this.login();
+          })
+          .catch((err) => {
+            console.log({ fingerprintAuthErr: err })
+          })
+        })
+        .catch(err => console.log({ isSensorAvailableError: err }))
+      } else {
+        console.log('USES FP SCANNER FOR ANDROID')
+        FingerprintScanner
+        .isSensorAvailable()
+        .then(res => {
+          console.log({ isSensorAvailableRes: res })
+          FingerprintScanner.authenticate({ title: 'Authentication', subTitle: 'Scan your fingerprint to continue' })
+          .then(() => {
+            this.setState({ token });
+            this.login();
+          })
+          .catch((err) => {
+            console.log({ fingerprintAuthErr: err })
+          })
+        })
+        .catch(err => console.log({ isSensorAvailableError: err }))
+      }
     }
   }
   
@@ -513,7 +534,7 @@ class Login extends Component {
   }
 
   render() {
-    const { isLoading, error, isResponseError, responseErrorMessage } = this.state;
+    const { isLoading, error, isResponseError, responseErrorMessage, askAuth } = this.state;
     const {  blockedFlag, isOtpModal } = this.state;
     const { theme } = this.props.state;
     return (
@@ -548,6 +569,25 @@ class Login extends Component {
             <PasswordWithIcon onTyping={(input) => this.setState({
               password: input
             })}/>
+            {
+              askAuth && (
+                <View style={{
+                  alignItems: 'center',
+                  marginBottom: 15
+                }}>
+                    <TouchableOpacity onPress={() => this.askFingerprint()}>
+                      <FontAwesomeIcon
+                        icon={ faFingerprint }
+                        size={40}
+                        style={{ color: Color.primary }}
+                      />
+                    </TouchableOpacity>
+                    <Text style={{ color: Color.darkGray }}>
+                      Use fingerprint to log in
+                    </Text>
+                </View>
+              )
+            }
             <TouchableHighlight
               style={[BasicStyles.btn, {
                 backgroundColor: theme ? theme.primary : Color.primary

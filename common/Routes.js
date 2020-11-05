@@ -62,6 +62,8 @@ export default {
   messengerMessagesCreate: apiUrl + 'messenger_messages/create',
   messengerMessagesRetrieve: apiUrl + 'messenger_messages/retrieve',
   messengerMessagesUpdate: apiUrl + 'messenger_messages/update_by_status',
+  mmCreateWithImageWithoutPayload: apiUrl + 'messenger_messages/create_with_image_without_payload',
+  imageUploadUnLink: apiUrl + 'images/upload_un_link',
   // ratings
   ratingsCreate: apiUrl + 'ratings/create',
   ratingsRetrieve: apiUrl + 'ratings/retrieve',
