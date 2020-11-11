@@ -93,6 +93,7 @@ export default {
     typing: 'typing',
     messages: 'App\\Events\\Message',
     messageGroup: 'App\\Events\\MessageGroup',
+    locationSharing: 'App\\Events\\LocationSharing',
   },
   tutorials: [
     {

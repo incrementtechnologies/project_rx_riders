@@ -29,5 +29,8 @@ export default {
     this.channel.bind(Helper.pusher.rider, response => {
       callback({type: Helper.pusher.rider, data: response.data})
     })
+    this.channel.bind(Helper.pusher.locationSharing, response => {
+      callback({type: Helper.pusher.locationSharing, data: response.data})
+    })
   }
 }

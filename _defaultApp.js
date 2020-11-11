@@ -7,7 +7,6 @@ import AppNavigation from 'navigation';
 import { createAppContainer } from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Helper } from 'common';
-import { Tutorial } from 'components';
 const AppContainer = createAppContainer(AppNavigation);
 
 function ReduxNavigation (props) {
@@ -15,53 +14,51 @@ function ReduxNavigation (props) {
 }
 
 const mapStateToProps = state => ({ state: state })
-let AppReduxNavigation = connect(mapStateToProps)(ReduxNavigation)
+const mapDispatchToProps = dispatch => {
+  const { actions } = require('@redux');
+  return {
+    setTheme: (theme) => dispatch(actions.setTheme(theme))
+  };
+};
+let AppReduxNavigation = connect(mapStateToProps, mapDispatchToProps)(ReduxNavigation)
 const store = createStore(rootReducer);
 
 export default class App extends React.Component{
   constructor(props) {
     super(props);
-  
-    this.state = {
-      tutorial: false
-    };
   }
 
   componentDidMount(){
-    this.checkTutorial();
-  }
-
-  checkTutorial = async () => {
-    try {
-      const flag = await AsyncStorage.getItem(Helper.APP_NAME + 'tutorial');
-      console.log('flag', flag)
-      if(flag != null) {
-        this.setState({tutorial: true})
-      }
-    } catch(e) {
-      console.log(e)
-    }
+    this.getTheme()
   }
   
-  storeData = async (key, value) => {
+  getTheme = async () => {
     try {
-      await AsyncStorage.setItem(`${Helper.APP_NAME}${key}`, value)
+      const primary = await AsyncStorage.getItem(Helper.APP_NAME + 'primary');
+      const secondary = await AsyncStorage.getItem(Helper.APP_NAME + 'secondary');
+      const tertiary = await AsyncStorage.getItem(Helper.APP_NAME + 'tertiary');
+      if(primary != null && secondary != null && tertiary != null) {
+        const { setTheme } = this.props;
+        setTheme({
+          primary: primary,
+          secondary: secondary,
+          tertiary: tertiary
+        })
+      }
     } catch (e) {
       console.log(e)
     }
   }
 
-  onFinish = () => {
-    this.storeData('tutorial', 'done');
-    this.setState({tutorial: true})
-  }
-
-  onSkip = () => {
-    console.log('onSkip')
+  storeData = async (key, value) => {
+    try {
+      await AsyncStorage.setItem(`${Helper.APP_NAME}primary`, value)
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   render() {
-    const { tutorial } = this.state;
     console.ignoredYellowBox = ['Warning: Each'];
     return (
       <Provider store={store}>
@@ -69,17 +66,7 @@ export default class App extends React.Component{
             flex: 1,
             backgroundColor: '#ffffff'
           }}>
-          {
-            tutorial == true && (
-              <AppReduxNavigation />
-            )
-          }
-          {
-            tutorial == false && (
-              <Tutorial onFinish={() => this.onFinish()} onSkip={() => this.onSkip()}/>
-            )
-          }
-         
+            <AppReduxNavigation />
         </View>
       </Provider>
     );
