@@ -5,7 +5,8 @@ import styles from 'components/Slider/Style';
 import {NavigationActions, StackActions} from 'react-navigation';
 import {ScrollView, Text, View, Image, TouchableOpacity} from 'react-native';
 import { connect } from 'react-redux';
-import { Helper, BasicStyles, Color } from 'common';
+import { Routes, Helper, BasicStyles, Color } from 'common';
+import Api from 'services/api/index.js';
 import Config from 'src/config.js';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
@@ -47,6 +48,7 @@ class Slider extends Component {
 
   logoutAction(){
     //clear storage
+    const { user } = this.props.state
     const { logout, setActiveRoute } = this.props;
 
     // unsubscribe pusher
@@ -55,6 +57,9 @@ class Slider extends Component {
       Pusher.pusher = null
       Pusher.channel = null
     }
+
+    // account status => offline
+    Api.request(Routes.accountStatus, { id: user.id, status: false }, () => {})
 
     logout();
     // setActiveRoute(null)

@@ -329,6 +329,10 @@ class Login extends Component {
 
   retrieveUserData = (accountId) => {
     const { user } = this.props.state
+
+    // account status => online
+    Api.request(Routes.accountStatus, { id: user.id, status: true }, () => {})
+
     if(Helper.retrieveDataFlag == 1){
       Pusher.listen(response => {
         this.managePusherResponse(response)
